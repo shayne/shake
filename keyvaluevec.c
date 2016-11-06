@@ -28,16 +28,8 @@ error:
 
 void KeyValueVec_destroy(KeyValueVec *vec)
 {
-    if (vec->nodes) {
-        KeyValueNode *nodesptr = vec->nodes;
-        for (; nodesptr && nodesptr->key != NULL; nodesptr++) {
-            if (nodesptr->key)
-                free(nodesptr->key);
-            if (nodesptr->value)
-                free(nodesptr->value);
-        }
+    if (vec->nodes)
         free(vec->nodes);
-    }
     free(vec);
 }
 
@@ -46,11 +38,8 @@ void KeyValueVec_set(KeyValueVec *vec, char *key, char *value)
     KeyValueNode *node = vec->cursor;
     check(node != NULL, "No node to set to");
 
-    node->key = calloc(strlen(key) + 1, sizeof(char));
-    node->value = calloc(strlen(value) + 1, sizeof(char));
-
-    strncpy(node->key, key, strlen(key));
-    strncpy(node->value, value, strlen(value));
+    node->key = key;
+    node->value = value;
 
     vec->cursor++;
 

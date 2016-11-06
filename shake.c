@@ -25,11 +25,9 @@ int main(int argc, char *argv[])
     Scripts *scripts = Scripts_init();
     Scripts_scan(scripts);
 
-    debug("Scripts count: %lu", scripts->count);
-
     KeyValueNode *node = NULL;
     while ((node = Scripts_nextfile(scripts)) != NULL) {
-        debug("SCRIPT: %s", node->value);
+        printf("- %s\n", node->key);
     }
 
     Scripts_destroy(scripts);
