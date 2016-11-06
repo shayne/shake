@@ -2,13 +2,13 @@
 #define _keyvalue_vec
 
 typedef struct KeyValueNode {
-  char *key;
-  char *value;
+    char *key;
+    char *value;
 } KeyValueNode;
 
 typedef struct KeyValueVec {
-  KeyValueNode *cursor;
-  KeyValueNode *nodes;
+    KeyValueNode *cursor;
+    KeyValueNode *nodes;
 } KeyValueVec;
 
 KeyValueVec *KeyValueVec_create(size_t);

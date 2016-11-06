@@ -7,15 +7,15 @@
 #define PROGRAM_BUG_ADDRESS "<shaynesweeney@me.com>"
 #define PROGRAM_DOC "Shake replaces make"
 
-static const struct argp_option argp_options[] = {
-    {
-        .name = "foo", .key = 'f', .arg = "FOOARG", .flags = 0, .doc = "foodoc",
-    },
-    {0}};
+static const struct argp_option argp_options[] =
+    { {
+          .name = "foo", .key = 'f', .arg = "FOOARG", .flags = 0, .doc = "foodoc",
+      },
+      { 0 } };
 
 typedef struct Arguments_args {
-  char *args[255];
-  char *f;
+    char *args[255];
+    char *f;
 } Arguments_args;
 
 Arguments_args *Arguments_create(void);
