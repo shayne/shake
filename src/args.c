@@ -28,14 +28,21 @@ static error_t argp_parser(int key, char *arg, struct argp_state *state)
     Script *script = NULL;
     Arguments_args *args = state->input;
 
+    if (args->script) {
+        return 0;
+    }
+
     switch (key) {
     case ARGP_KEY_ARG:
         if (state->arg_num == 0) {
             script = Script_createfromname(arg);
             check(script != NULL, "Script was null");
+
             args->script = script;
-            // make argv[0] the script name
-            args->script_argv[state->arg_num] = script->path;
+            // set the remaining argv as the argv for script
+            args->script_argv = &state->argv[state->next - 1];
+            // move next to the end, stop parsing
+            state->next = state->argc;
         } else {
             args->script_argv[state->arg_num] = arg;
         }
@@ -57,7 +64,7 @@ error:
     return 1;
 }
 
-static struct argp argp = {.options = argp_options,
+static struct argp argp = {.options = NULL, // argp_options,
                            .parser = argp_parser,
                            .args_doc = NULL,
                            .doc = PROGRAM_DOC,
@@ -67,5 +74,5 @@ static struct argp argp = {.options = argp_options,
 
 error_t Arguments_parse(int argc, char *argv[], Arguments_args *args)
 {
-    return argp_parse(&argp, argc, argv, 0, 0, args);
+    return argp_parse(&argp, argc, argv, ARGP_IN_ORDER, 0, args);
 }

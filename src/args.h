@@ -12,7 +12,7 @@
 static const struct argp_option argp_options[] = { { 0, 0, 0, 0, 0, 0 } };
 
 typedef struct Arguments_args {
-    char *script_argv[255];
+    char **script_argv;
     Script *script;
 } Arguments_args;
 
