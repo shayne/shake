@@ -9,7 +9,7 @@ CFLAGS = \
 
 all: shake
 
-shake: args.o scripts.o runner.o keyvaluevec.o
+shake: args.o scripts.o script.o runner.o keyvaluevec.o bstrlib.o
 
 clean:
 	rm -f shake *.o *.plist gmon.out

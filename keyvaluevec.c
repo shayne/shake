@@ -1,6 +1,3 @@
-#include <stdlib.h>
-#include <strings.h>
-
 #include "dbg.h"
 
 #include "keyvaluevec.h"
@@ -33,7 +30,7 @@ void KeyValueVec_destroy(KeyValueVec *vec)
     free(vec);
 }
 
-void KeyValueVec_set(KeyValueVec *vec, char *key, char *value)
+void KeyValueVec_set(KeyValueVec *vec, char *key, void *value)
 {
     KeyValueNode *node = vec->cursor;
     check(node != NULL, "No node to set to");

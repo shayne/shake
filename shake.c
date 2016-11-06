@@ -4,6 +4,7 @@
 
 #include "args.h"
 #include "runner.h"
+#include "script.h"
 #include "scripts.h"
 
 int main(int argc, char *argv[])
@@ -28,6 +29,8 @@ int main(int argc, char *argv[])
     KeyValueNode *node = NULL;
     while ((node = Scripts_nextfile(scripts)) != NULL) {
         printf("- %s\n", node->key);
+        Script *script = node->value;
+        printf("-- %s\n", Script_path(script));
     }
 
     Scripts_destroy(scripts);

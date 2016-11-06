@@ -3,6 +3,7 @@
 
 #include "dbg.h"
 
+#include "script.h"
 #include "scripts.h"
 
 Scripts *Scripts_init()
@@ -16,10 +17,9 @@ void Scripts_destroy(Scripts *scripts)
     if (scripts->files) {
         for (i = 0; i < scripts->count; i++) {
             KeyValueNode node = scripts->files->nodes[i];
-            if (node.key)
-                free(node.key);
-            if (node.value)
-                free(node.value);
+            if (node.value) {
+                Script_destroy(node.value);
+            }
         }
         KeyValueVec_destroy(scripts->files);
     }
@@ -59,11 +59,8 @@ void Scripts_populate(Scripts *scripts, char **pathv, size_t pathc)
 
     size_t i = 0;
     for (i = 0; i < pathc; i++, pathv++) {
-        size_t psize = strlen(*pathv);
-        char *path = calloc(psize + 1, sizeof(char));
-        strncpy(path, *pathv, psize + 1);
-        char *key = Scripts_makename(path);
-        KeyValueVec_set(scripts->files, key, path);
+        Script *script = Script_create(*pathv);
+        KeyValueVec_set(scripts->files, Script_name(script), script);
     }
 
 error:

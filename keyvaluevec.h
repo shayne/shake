@@ -1,9 +1,11 @@
 #ifndef _keyvalue_vec
 #define _keyvalue_vec
 
+#include <stdlib.h>
+
 typedef struct KeyValueNode {
     char *key;
-    char *value;
+    void *value;
 } KeyValueNode;
 
 typedef struct KeyValueVec {
@@ -11,9 +13,9 @@ typedef struct KeyValueVec {
     KeyValueNode *nodes;
 } KeyValueVec;
 
-KeyValueVec *KeyValueVec_create(size_t);
+KeyValueVec *KeyValueVec_create(size_t count);
 void KeyValueVec_destroy(KeyValueVec *vec);
 
-void KeyValueVec_set(KeyValueVec *vec, char *key, char *value);
+void KeyValueVec_set(KeyValueVec *vec, char *key, void *value);
 
 #endif
