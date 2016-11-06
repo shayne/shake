@@ -21,7 +21,10 @@ int main(int argc, char *argv[])
 
     if (args->script) {
         rc = Runner_run(args->script, args->script_argv);
+        // does not return on success
         check(rc == 0, "Failed to run script: %s", Script_name(args->script));
+        check(0, "Check reached after run!");
+        return 1;
     }
 
     Arguments_destroy(args);
