@@ -18,22 +18,27 @@ error: // fallthrough
 
 void Arguments_destroy(Arguments_args *args)
 {
+    if (args->script)
+        Script_destroy(args->script);
     free(args);
 }
 
 static error_t argp_parser(int key, char *arg, struct argp_state *state)
 {
+    Script *script = NULL;
     Arguments_args *args = state->input;
 
     switch (key) {
-    case 'f':
-        args->f = arg;
-        break;
-
     case ARGP_KEY_ARG:
-        /* if (state->arg_num >= 1) */
-        /* argp_usage(state); */
-        args->args[state->arg_num] = arg;
+        if (state->arg_num == 0) {
+            script = Script_createfromname(arg);
+            check(script != NULL, "Script was null");
+            args->script = script;
+            // make argv[0] the script name
+            args->script_argv[state->arg_num] = script->path;
+        } else {
+            args->script_argv[state->arg_num] = arg;
+        }
         break;
 
     case ARGP_KEY_END:
@@ -46,6 +51,10 @@ static error_t argp_parser(int key, char *arg, struct argp_state *state)
     }
 
     return 0;
+error:
+    if (script)
+        Script_destroy(script);
+    return 1;
 }
 
 static struct argp argp = {.options = argp_options,
@@ -56,7 +65,7 @@ static struct argp argp = {.options = argp_options,
                            .help_filter = NULL,
                            .argp_domain = NULL };
 
-void Arguments_parse(int argc, char *argv[], Arguments_args *args)
+error_t Arguments_parse(int argc, char *argv[], Arguments_args *args)
 {
-    argp_parse(&argp, argc, argv, 0, 0, args);
+    return argp_parse(&argp, argc, argv, 0, 0, args);
 }

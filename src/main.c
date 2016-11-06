@@ -9,21 +9,25 @@
 
 int main(int argc, char *argv[])
 {
-    Arguments_args *args = Arguments_create();
-    Arguments_parse(argc, argv, args);
+    int rc;
+    Arguments_args *args = NULL;
+    Scripts *scripts = NULL;
 
-    if (args->f) {
-        debug("F was set: %s", args->f);
-    }
+    args = Arguments_create();
+    check(args != NULL, "Failed to create args");
 
-    if (args->args[0] != NULL) {
-        Runner_run(args->args[0], &args->args[0]);
+    rc = Arguments_parse(argc, argv, args);
+    check(rc == 0, "Failed to parse CLI");
+
+    if (args->script) {
+        rc = Runner_run(args->script, args->script_argv);
+        check(rc == 0, "Failed to run script: %s", Script_name(args->script));
     }
 
     Arguments_destroy(args);
     args = NULL;
 
-    Scripts *scripts = Scripts_init();
+    scripts = Scripts_init();
     Scripts_scan(scripts);
 
     KeyValueNode *node = NULL;
@@ -37,4 +41,10 @@ int main(int argc, char *argv[])
     scripts = NULL;
 
     return 0;
+error:
+    if (args)
+        Arguments_destroy(args);
+    if (scripts)
+        Scripts_destroy(scripts);
+    return 1;
 }

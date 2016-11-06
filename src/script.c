@@ -53,6 +53,32 @@ error:
     return NULL;
 }
 
+Script *Script_createfromname(char *name)
+{
+    Script *out = NULL;
+
+    bstring path = bformat("scripts/run-%s.sh", name);
+    check(path != NULL, "failed to format path");
+
+    char *cpath = bdata(path);
+    check(path != NULL, "path errored out");
+
+    out = Script_create(cpath);
+    check(out != NULL, "Failed to create Script from path: %s", cpath);
+
+    bdestroy(path);
+    path = NULL;
+
+    return out;
+
+error:
+    if (path)
+        bdestroy(path);
+    if (out)
+        Script_destroy(out);
+    return out;
+}
+
 void Script_destroy(Script *script)
 {
     bdestroy(script->name);

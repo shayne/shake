@@ -19,15 +19,16 @@
 #define log_err(...)                                                                               \
     fprintf(stderr, "[ERROR] (%s:%d: errno: %s) ", __FILE__, __LINE__, clean_errno());             \
     fprintf(stderr, __VA_ARGS__);                                                                  \
-    fprintf(stderr, "\n")
+    fprintf(stderr, "\n");
 
 #define log_warn(...)                                                                              \
     fprintf(stderr, "[WARN] (%s:%d: errno: %s) ", __FILE__, __LINE__, clean_errno());              \
     fprintf(stderr, __VA_ARGS__);                                                                  \
     fprintf(stderr, "\n")
 
-#define log_info(M, ...)                                                                           \
-    fprintf(stderr, "[INFO] (%s:%d) ", __FILE__, __LINE__) fprintf(stderr, __VA_ARGS__);           \
+#define log_info(...)                                                                              \
+    fprintf(stderr, "[INFO] (%s:%d) ", __FILE__, __LINE__);                                        \
+    fprintf(stderr, __VA_ARGS__);                                                                  \
     fprintf(stderr, "\n")
 
 #define check(A, ...)                                                                              \
@@ -37,9 +38,9 @@
         goto error;                                                                                \
     }
 
-#define sentinel(M, ...)                                                                           \
+#define sentinel(...)                                                                              \
     {                                                                                              \
-        log_err(M, ##__VA_ARGS__);                                                                 \
+        log_err(__VA_ARGS__);                                                                      \
         errno = 0;                                                                                 \
         goto error;                                                                                \
     }
