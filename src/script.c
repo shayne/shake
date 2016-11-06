@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "bstrlib.h"
+#include "lib/bstrlib.h"
 
 #include "dbg.h"
 
