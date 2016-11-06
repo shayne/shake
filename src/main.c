@@ -4,7 +4,6 @@
 
 #include "args.h"
 #include "runner.h"
-#include "script.h"
 #include "scripts.h"
 
 int main(int argc, char *argv[])
