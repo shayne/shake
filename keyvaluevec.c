@@ -5,54 +5,52 @@
 
 #include "keyvaluevec.h"
 
+KeyValueVec *KeyValueVec_create(size_t count) {
+  KeyValueVec *vec = calloc(1, sizeof(KeyValueVec));
+  check_mem(vec);
 
-KeyValueVec * KeyValueVec_create(unsigned int count)
-{
-    int i = 0;
+  KeyValueNode *nodes = calloc(count + 1, sizeof(KeyValueNode));
+  check_mem(nodes);
 
-    KeyValueVec *vec = calloc(1, sizeof(KeyValueVec));
-    check_mem(vec);
+  vec->nodes = nodes;
+  vec->cursor = nodes;
 
-    KeyValueNode * nodes = calloc(count + 1, sizeof(KeyValueNode));
-    check_mem(nodes);
-
-    vec->nodes = nodes;
-    vec->cursor = nodes;
-
-    return vec;
+  return vec;
 
 error:
-    if (vec->nodes) free(vec->nodes);
-    if (vec) free(vec);
-    return NULL;
-}
-
-void KeyValueVec_destroy(KeyValueVec * vec)
-{
-    if (vec->nodes) {
-        KeyValueNode * nodesptr = vec->nodes;
-        for (; nodesptr && nodesptr->key != NULL; nodesptr++) {
-            if (nodesptr->key) free(nodesptr->key);
-            if (nodesptr->value) free(nodesptr->value);
-        }
-        free(vec->nodes);
-    }
+  if (vec->nodes)
+    free(vec->nodes);
+  if (vec)
     free(vec);
+  return NULL;
 }
 
-void KeyValueVec_set(KeyValueVec * vec, char *key, char *value)
-{
-    KeyValueNode *node = vec->cursor;
-    check(node != NULL, "No node to set to");
+void KeyValueVec_destroy(KeyValueVec *vec) {
+  if (vec->nodes) {
+    KeyValueNode *nodesptr = vec->nodes;
+    for (; nodesptr && nodesptr->key != NULL; nodesptr++) {
+      if (nodesptr->key)
+        free(nodesptr->key);
+      if (nodesptr->value)
+        free(nodesptr->value);
+    }
+    free(vec->nodes);
+  }
+  free(vec);
+}
 
-    node->key = calloc(strlen(key) + 1, sizeof(char));
-    node->value = calloc(strlen(value) + 1, sizeof(char));
+void KeyValueVec_set(KeyValueVec *vec, char *key, char *value) {
+  KeyValueNode *node = vec->cursor;
+  check(node != NULL, "No node to set to");
 
-    strncpy(node->key, key, strlen(key));
-    strncpy(node->value, value, strlen(value));
+  node->key = calloc(strlen(key) + 1, sizeof(char));
+  node->value = calloc(strlen(value) + 1, sizeof(char));
 
-    vec->cursor++;
+  strncpy(node->key, key, strlen(key));
+  strncpy(node->value, value, strlen(value));
+
+  vec->cursor++;
 
 error:
-    return;
+  return;
 }
