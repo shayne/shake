@@ -44,6 +44,12 @@ Script *Script_create(char *path)
     return out;
 
 error:
+    if (out->path)
+        bdestroy(out->path);
+    if (out->name)
+        bdestroy(out->name);
+    if (out)
+        free(out);
     return NULL;
 }
 
