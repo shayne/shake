@@ -30,29 +30,34 @@ int main(int argc, char *argv[])
     char *cwd = dirname(projfile);
     check(rc == 0, "Failed to detect project root");
 
-    //    /** SHAKE FILE TESTS **/
-    //    if (argc > 1 && strcmp(argv[1], "foo") == 0) {
-    //        FILE *fp;
-    //        fp = popen("bash --rcfile Shakefile -i -c 'compgen -A function'",
-    //        "r");
-    //        check(fp != NULL, "failed to open pipe");
-    //
-    //        char buf[255];
-    //        while(fgets(buf, 255, fp) != NULL) {
-    //            printf("buf: %s", buf);
-    //        }
-    //
-    //        pclose(fp);
-    //
-    //        debug("arg: %s", argv[2]);
-    //        debug("arg: %s", argv[3]);
-    //        debug("arg: %s", argv[4]);
-    //        char *eargv[255] = { "bash", "--rcfile", "Shakefile", "-i", "-c",
-    //        "cmd-foo", "--", argv[2], argv[3], argv[4], NULL };
-    //        rc = execvp("bash", eargv);
-    //        check(rc == 0, "failed to execvp");
-    //    }
-    //    /** **/
+    /** SHAKE FILE TESTS **/
+    if (argc > 1 && strcmp(argv[1], "foo") == 0) {
+        FILE *fp;
+        fp = popen("bash --rcfile Shakefile -i -c 'compgen -A function'", "r");
+        check(fp != NULL, "failed to open pipe");
+
+        char buf[255];
+        while (fgets(buf, 255, fp) != NULL) {
+            printf("buf: %s", buf);
+        }
+
+        pclose(fp);
+
+        char *eargv[] = { "bash", "--rcfile",   "Shakefile", "-i",
+                          "-c",   "cmd-foo $@", "bash",      NULL };
+
+        int eargc = sizeof(eargv) / sizeof(char *);
+        int rargc = argc - 1;
+
+        char *xargv[255] = { 0 };
+        check_mem(xargv);
+
+        memcpy(&xargv[0], &eargv[0], eargc * sizeof(char *));
+        memcpy(&xargv[eargc - 1], &argv[1], rargc * sizeof(char *));
+        rc = execvp("bash", xargv);
+        check(rc == 0, "failed to execvp");
+    }
+    /** **/
 
     args = Arguments_create(projfile);
     check(args != NULL, "Failed to create args");
