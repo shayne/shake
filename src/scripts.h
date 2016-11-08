@@ -5,11 +5,12 @@
 
 typedef struct Scripts {
     size_t count;
+    char *cwd;
     KeyValueVec *files;
     KeyValueNode *filesiter;
 } Scripts;
 
-Scripts *Scripts_init(void);
+Scripts *Scripts_init(char *);
 void Scripts_destroy(Scripts *scripts);
 
 void Scripts_scan(Scripts *scripts);

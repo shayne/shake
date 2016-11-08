@@ -1,0 +1,4 @@
+/home/shayne/Code/learn-c/shake/CMakeFiles/rebuild_cache.dir
+/home/shayne/Code/learn-c/shake/CMakeFiles/edit_cache.dir
+/home/shayne/Code/learn-c/shake/CMakeFiles/shake.dir
+/home/shayne/Code/learn-c/shake/CMakeFiles/vendor.dir

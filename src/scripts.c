@@ -1,14 +1,17 @@
 #include <glob.h>
 #include <stdlib.h>
+#include <zconf.h>
 
 #include "dbg.h"
 
 #include "script.h"
 #include "scripts.h"
 
-Scripts *Scripts_init()
+Scripts *Scripts_init(char *cwd)
 {
-    return calloc(1, sizeof(Scripts));
+    Scripts *s;
+    s = calloc(1, sizeof(Scripts));
+    s->cwd = cwd;
 }
 
 void Scripts_destroy(Scripts *scripts)
@@ -71,6 +74,7 @@ void Scripts_scan(Scripts *scripts)
 {
     glob_t globbuf;
 
+    chdir(scripts->cwd);
     glob("scripts/run-*", 0, NULL, &globbuf);
 
     scripts->count = globbuf.gl_pathc;

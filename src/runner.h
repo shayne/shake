@@ -3,6 +3,6 @@
 
 #include "script.h"
 
-int Runner_run(Script *script, char **argv);
+int Runner_run(char *script, Script *argv, char **pString);
 
 #endif
