@@ -9,6 +9,7 @@
 #include "runner.h"
 #include "scripts.h"
 #include "shakefile/shakefile.h"
+#include "utils.h"
 
 #define TCOLOR(C, S) C S TC_CLEAR
 #define TC_CLEAR "\x1b[0m"
@@ -21,6 +22,7 @@
 
 int main(int argc, char *argv[])
 {
+    int i;
     int rc;
     Arguments_args *args = NULL;
     struct Scripts scripts = { 0 };
@@ -43,7 +45,6 @@ int main(int argc, char *argv[])
     check(rc == 0, "Failed to parse CLI");
 
     if (args->script_name) {
-        int i;
         char *fn = NULL;
         for (i = 0; i < cap.used; i++) {
             if (strcmp(cap.array[i], args->script_name) == 0) {
@@ -61,8 +62,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    capfree(&cap);
-
     Arguments_destroy(args);
 
     Scripts_scan(&scripts);
@@ -74,6 +73,12 @@ int main(int argc, char *argv[])
         printf("-- " TC_MAGENTA("%s") "\n", Script_path(script));
     }
 
+    for (i = 0; i < cap.used; i++) {
+        printf(TC_RED("-") " " TC_GREEN("%s") "\n", cap.array[i]);
+        printf("-- " TC_MAGENTA("Shakefile") "\n");
+    }
+
+    capfree(&cap);
     Scripts_destroy(&scripts);
     free(projfile);
     free(cwd);
