@@ -12,6 +12,7 @@ Scripts *Scripts_init(char *cwd)
     Scripts *s;
     s = calloc(1, sizeof(Scripts));
     s->cwd = cwd;
+    return s;
 }
 
 void Scripts_destroy(Scripts *scripts)

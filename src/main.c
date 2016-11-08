@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
     }
 
     Scripts_destroy(scripts);
+    free(projfile);
 
     return 0;
 error:

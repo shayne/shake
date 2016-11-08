@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.6)
 project(shake)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
+
 include_directories("${PROJECT_SOURCE_DIR}/vendor")
 
 set(VENDOR_FILES
@@ -28,3 +30,4 @@ set(SOURCE_FILES
 
 add_executable(shake ${SOURCE_FILES})
 target_link_libraries(shake vendor)
+
