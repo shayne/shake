@@ -44,16 +44,16 @@ int main(int argc, char *argv[])
         pclose(fp);
 
         char *eargv[] = { "bash", "--rcfile",   "Shakefile", "-i",
-                          "-c",   "cmd-foo $@", "bash",      NULL };
+                          "-c",   "cmd-foo $@", "Shakefile", NULL };
 
         int eargc = sizeof(eargv) / sizeof(char *);
         int rargc = argc - 1;
 
-        char *xargv[255] = { 0 };
-        check_mem(xargv);
+        //        char **xargv = calloc(eargc + rargc, sizeof(char *));
+        char *xargv[255]; // = { 0 };
 
         memcpy(&xargv[0], &eargv[0], eargc * sizeof(char *));
-        memcpy(&xargv[eargc - 1], &argv[1], rargc * sizeof(char *));
+        memcpy(&xargv[eargc - 1], &argv[2], rargc * sizeof(char *));
         rc = execvp("bash", xargv);
         check(rc == 0, "failed to execvp");
     }
