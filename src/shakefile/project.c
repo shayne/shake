@@ -2,14 +2,13 @@
 // Created by shayne on 11/7/16.
 //
 
-#include <zconf.h>
-#include <sys/param.h>
-#include <stdlib.h>
-#include "shakefile.h"
 #include "../dbg.h"
+#include "shakefile.h"
+#include <stdlib.h>
+#include <sys/param.h>
+#include <zconf.h>
 
 #define SHAKEFILE_NAME "Shakefile"
-
 
 int up_dir(char *root, char *out, size_t size)
 {

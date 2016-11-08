@@ -11,10 +11,10 @@ typedef struct {
     char *root_path;
 } Shakefile;
 
-Shakefile * Shakefile_create();
+Shakefile *Shakefile_create();
 void Shakefile_destroy(Shakefile *file);
 
 void Shakefile_detect_functions(Shakefile *file);
 char *Shakefile_find_projfile(int *success);
 
-#endif //SHAKE_SHAKEFILE_H
+#endif // SHAKE_SHAKEFILE_H
