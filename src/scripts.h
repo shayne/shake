@@ -3,18 +3,17 @@
 
 #include "keyvaluevec.h"
 
-typedef struct Scripts {
+struct Scripts {
     size_t count;
     char *cwd;
     KeyValueVec *files;
     KeyValueNode *filesiter;
-} Scripts;
+};
 
-Scripts *Scripts_init(char *);
-void Scripts_destroy(Scripts *scripts);
+void Scripts_destroy(struct Scripts *scripts);
 
-void Scripts_scan(Scripts *scripts);
+void Scripts_scan(struct Scripts *scripts);
 
-KeyValueNode *Scripts_nextfile(Scripts *scripts);
+KeyValueNode *Scripts_nextfile(struct Scripts *scripts);
 
 #endif

@@ -7,15 +7,7 @@
 #include "script.h"
 #include "scripts.h"
 
-Scripts *Scripts_init(char *cwd)
-{
-    Scripts *s;
-    s = calloc(1, sizeof(Scripts));
-    s->cwd = cwd;
-    return s;
-}
-
-void Scripts_destroy(Scripts *scripts)
+void Scripts_destroy(struct Scripts *scripts)
 {
     size_t i = 0;
     if (scripts->files) {
@@ -27,7 +19,6 @@ void Scripts_destroy(Scripts *scripts)
         }
         KeyValueVec_destroy(scripts->files);
     }
-    free(scripts);
 }
 
 char *Scripts_makename(char *path)
@@ -51,7 +42,7 @@ error:
     return NULL;
 }
 
-void Scripts_populate(Scripts *scripts, char **pathv, size_t pathc)
+void Scripts_populate(struct Scripts *scripts, char **pathv, size_t pathc)
 {
     if (!scripts->files) {
         scripts->files = KeyValueVec_create(pathc);
@@ -71,7 +62,7 @@ error:
     return;
 }
 
-void Scripts_scan(Scripts *scripts)
+void Scripts_scan(struct Scripts *scripts)
 {
     glob_t globbuf;
 
@@ -85,7 +76,7 @@ void Scripts_scan(Scripts *scripts)
     globfree(&globbuf);
 }
 
-KeyValueNode *Scripts_nextfile(Scripts *scripts)
+KeyValueNode *Scripts_nextfile(struct Scripts *scripts)
 {
     // check that we didn't hit a null/empty node/file
     if (*(void **)scripts->filesiter) {

@@ -3,14 +3,13 @@
 #include "args.h"
 #include "dbg.h"
 
-Arguments_args *Arguments_create(char *projfile)
+Arguments_args *Arguments_create()
 {
     argp_program_version = PROGRAM_VERSION;
     argp_program_bug_address = PROGRAM_BUG_ADDRESS;
 
     Arguments_args *args = NULL;
     args = calloc(1, sizeof(Arguments_args));
-    args->projfile = projfile;
     check_mem(args);
 
 error: // fallthrough
@@ -19,27 +18,21 @@ error: // fallthrough
 
 void Arguments_destroy(Arguments_args *args)
 {
-    if (args->script)
-        Script_destroy(args->script);
     free(args);
 }
 
 static error_t argp_parser(int key, char *arg, struct argp_state *state)
 {
-    Script *script = NULL;
     Arguments_args *args = state->input;
 
-    if (args->script) {
-        return 0;
-    }
+    //    if (args->script) {
+    //        return 0;
+    //    }
 
     switch (key) {
     case ARGP_KEY_ARG:
         if (state->arg_num == 0) {
-            script = Script_createfromname(arg);
-            check(script != NULL, "Script was null");
-
-            args->script = script;
+            args->script_name = arg;
             // set the remaining argv as the argv for script
             args->script_argv = &state->argv[state->next - 1];
             // move next to the end, stop parsing
@@ -59,10 +52,6 @@ static error_t argp_parser(int key, char *arg, struct argp_state *state)
     }
 
     return 0;
-error:
-    if (script)
-        Script_destroy(script);
-    return 1;
 }
 
 static struct argp argp = {.options = NULL, // argp_options,
