@@ -21,27 +21,6 @@ void Scripts_destroy(struct Scripts *scripts)
     }
 }
 
-char *Scripts_makename(char *path)
-{
-    char *pch;
-    const char *prefix = "scripts/run-";
-    pch = strstr(path, prefix);
-    check(pch - path == 0, "Script does not start with prefix");
-
-    char *pns = pch + strlen(prefix);
-
-    char *pne = strrchr(pns, '.');
-    long size = pne - pns;
-    check(size > 0, "Size not greater than 0");
-
-    char *name = calloc((size_t)size + 1, sizeof(char));
-    strncpy(name, pns, (size_t)size);
-
-    return name;
-error:
-    return NULL;
-}
-
 void Scripts_populate(struct Scripts *scripts, char **pathv, size_t pathc)
 {
     if (!scripts->files) {

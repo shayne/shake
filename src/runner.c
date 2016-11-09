@@ -34,7 +34,7 @@ int Runner_runfn(char *fn, char *cwd, int argc, char *argv[])
     char *xargv[255]; // = { 0 };
 
     memcpy(&xargv[0], &eargv[0], eargc * sizeof(char *));
-    memcpy(&xargv[eargc - 1], &argv[2], rargc * sizeof(char *));
+    memcpy(&xargv[eargc - 1], &argv[1], rargc * sizeof(char *));
     chdir(cwd);
     return execvp("bash", xargv);
 

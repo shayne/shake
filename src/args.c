@@ -1,25 +1,9 @@
 #include <stdlib.h>
 
 #include "args.h"
-#include "dbg.h"
 
-Arguments_args *Arguments_create()
-{
-    argp_program_version = PROGRAM_VERSION;
-    argp_program_bug_address = PROGRAM_BUG_ADDRESS;
-
-    Arguments_args *args = NULL;
-    args = calloc(1, sizeof(Arguments_args));
-    check_mem(args);
-
-error: // fallthrough
-    return args;
-}
-
-void Arguments_destroy(Arguments_args *args)
-{
-    free(args);
-}
+const char *argp_program_version = PROGRAM_VERSION;
+const char *argp_program_bug_address = PROGRAM_BUG_ADDRESS;
 
 static error_t argp_parser(int key, char *arg, struct argp_state *state)
 {

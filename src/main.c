@@ -5,11 +5,9 @@
 
 #include "dbg.h"
 
-#include "args.h"
 #include "runner.h"
 #include "scripts.h"
 #include "shakefile/shakefile.h"
-#include "utils.h"
 
 #define TCOLOR(C, S) C S TC_CLEAR
 #define TC_CLEAR "\x1b[0m"
@@ -20,51 +18,22 @@
 #define TC_MAGENTA(S) TCOLOR("\x1b[35m", S)
 #define TC_CYAN(S) TCOLOR("\x1b[36m", S)
 
-int main(int argc, char *argv[])
+void print_fns()
 {
     int i;
     int rc;
-    Arguments_args *args = NULL;
+    int fncount;
+    char *fns[255];
     struct Scripts scripts = { 0 };
 
     char *projfile = Shakefile_find_projfile(&rc);
     char *cwd = dirname(strdup(projfile));
-    check(rc == 0, "Failed to detect project root");
 
     scripts.cwd = cwd;
-
-    CharPArray cap;
-    capinit(&cap, 10);
-
-    Shakefile_detect_functions(projfile, &cap);
-
-    args = Arguments_create();
-    check(args != NULL, "Failed to create args");
-
-    rc = Arguments_parse(argc, argv, args);
-    check(rc == 0, "Failed to parse CLI");
-
-    if (args->script_name) {
-        char *fn = NULL;
-        for (i = 0; i < cap.used; i++) {
-            if (strcmp(cap.array[i], args->script_name) == 0) {
-                fn = cap.array[i];
-                break;
-            }
-        }
-
-        if (fn != NULL) {
-            Runner_runfn(fn, cwd, argc, argv);
-            perror("runfn");
-        } else {
-            Runner_run(cwd, args->script_name, args->script_argv);
-            perror("run");
-        }
-    }
-
-    Arguments_destroy(args);
-
     Scripts_scan(&scripts);
+
+    check(rc == 0, "Failed to detect project root");
+    fncount = Shakefile_detect_functions(projfile, 255, fns);
 
     KeyValueNode *node = NULL;
     while ((node = Scripts_nextfile(&scripts)) != NULL) {
@@ -73,24 +42,83 @@ int main(int argc, char *argv[])
         printf("-- " TC_MAGENTA("%s") "\n", Script_path(script));
     }
 
-    for (i = 0; i < cap.used; i++) {
-        printf(TC_RED("-") " " TC_GREEN("%s") "\n", cap.array[i]);
+    for (i = 0; i < fncount; i++) {
+        printf(TC_RED("-") " " TC_GREEN("%s") "\n", fns[i]);
         printf("-- " TC_MAGENTA("Shakefile") "\n");
     }
 
-    capfree(&cap);
+    free(projfile);
+    free(cwd);
+    Scripts_destroy(&scripts);
+    for (i = 0; i < fncount; i++)
+        free(fns[i]);
+
+error:
+    return;
+}
+
+int run_script(char *script_name, int argc, char *argv[])
+{
+    int i;
+    int rc;
+    int fncount;
+    char *fns[255];
+    struct Scripts scripts = { 0 };
+
+    char *projfile = Shakefile_find_projfile(&rc);
+    char *cwd = dirname(strdup(projfile));
+    check(rc == 0, "Failed to detect project root");
+
+    fncount = Shakefile_detect_functions(projfile, 255, fns);
+
+    scripts.cwd = cwd;
+
+    if (script_name) {
+        char *fn = NULL;
+        for (i = 0; i < fncount; i++) {
+            if (strcmp(fns[i], script_name) == 0) {
+                fn = fns[i];
+                break;
+            }
+        }
+
+        if (fn != NULL) {
+            Runner_runfn(fn, cwd, argc, &argv[0]);
+            perror("runfn");
+        } else {
+            Runner_run(cwd, script_name, &argv[0]);
+            perror("run");
+        }
+    }
+
+error:
     Scripts_destroy(&scripts);
     free(projfile);
     free(cwd);
 
-    return 0;
+    return rc;
+}
 
-error:
-    capfree(&cap);
-    if (projfile)
-        free(projfile);
-    if (args)
-        Arguments_destroy(args);
-    Scripts_destroy(&scripts);
-    return 1;
+int main(int argc, char *argv[])
+{
+    int rc;
+
+    if (argc == 1) {
+        print_fns();
+        return 0;
+    }
+
+    if (argv[1][0] == '-') {
+        fprintf(stderr, "Flag passed: %s", argv[1]);
+        return 1;
+    }
+
+    char *script_name = argv[1];
+
+    rc = run_script(script_name, argc, &argv[1]);
+    if (rc != 0) {
+        fprintf(stderr, "Unknown script/fn: %s'\n", script_name);
+    }
+
+    return 0;
 }

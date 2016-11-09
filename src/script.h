@@ -7,7 +7,6 @@ typedef struct Script {
 } Script;
 
 Script *Script_create(char *path);
-Script *Script_createfromname(char *name);
 
 void Script_destroy(Script *script);
 

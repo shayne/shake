@@ -8,7 +8,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-void Shakefile_detect_functions(char *projfile, CharPArray *cap)
+int Shakefile_detect_functions(char *projfile, size_t size, char *fns[])
 {
     pid_t pid;
     int pipes[2];
@@ -38,18 +38,24 @@ void Shakefile_detect_functions(char *projfile, CharPArray *cap)
 
     close(pipes[1]);
 
+    int i = 0;
     bstring line;
     FILE *stdout = fdopen(pipes[0], "r");
     while ((line = bgets((bNgetc)fgetc, stdout, '\n')) != NULL) {
         btrimws(line);
         bdelete(line, 0, 4); // remove "cmd-"
-        capinsert(cap, bdata(line), (size_t)blength(line));
+
+        fns[i++] = strdup(bdata(line));
+        check(i < size, "too many functions");
+
         bdestroy(line);
     }
 
     fclose(stdout);
     wait(0);
 
+    return i;
+
 error:
-    return;
+    return -1;
 }
