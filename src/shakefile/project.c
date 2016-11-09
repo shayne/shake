@@ -4,9 +4,9 @@
 
 #include "../dbg.h"
 #include "shakefile.h"
+#include <stdlib.h>
 #include <sys/param.h>
 #include <zconf.h>
-#include <stdlib.h>
 
 #define SHAKEFILE_NAME "Shakefile"
 

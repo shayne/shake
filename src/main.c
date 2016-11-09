@@ -82,12 +82,11 @@ int run_script(char *script_name, int argc, char *argv[])
             }
         }
 
+        // does not return on success
         if (fn != NULL) {
-            Runner_runfn(fn, cwd, argc, &argv[0]);
-            perror("runfn");
+            return Runner_runfn(fn, cwd, argc, argv);
         } else {
-            Runner_run(cwd, script_name, &argv[0]);
-            perror("run");
+            return Runner_run(script_name, cwd, argv);
         }
     }
 

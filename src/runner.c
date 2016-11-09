@@ -5,7 +5,7 @@
 #include "dbg.h"
 #include "runner.h"
 
-int Runner_run(char *cwd, char *script_name, char *argv[])
+int Runner_run(char *script_name, char *cwd, char *argv[])
 {
     char *cmd;
     asprintf(&cmd, "scripts/run-%s.sh", script_name);
