@@ -5,8 +5,11 @@
 #include "../colors.h"
 #include "../dbg.h"
 #include <glob.h>
+#include <stdlib.h>
+
+#ifdef TARGET_OS_X
 #include <libgen.h>
-#include <malloc.h>
+#endif
 
 char *makescriptname(char *path)
 {
