@@ -6,6 +6,7 @@
 #include "dbg.h"
 
 #include "runner.h"
+#include "runscripts/runscripts.h"
 #include "scripts.h"
 #include "shakefile/shakefile.h"
 
@@ -57,41 +58,27 @@ error:
     return;
 }
 
-int run_script(char *script_name, int argc, char *argv[])
+int run_script(char *cmd_name, int argc, char *argv[])
 {
-    int i;
     int rc;
-    int fncount;
-    char *fns[255];
-    struct Scripts scripts = { 0 };
+    char *runscript = NULL;
 
     char *projfile = Shakefile_find_projfile(&rc);
     char *cwd = dirname(strdup(projfile));
     check(rc == 0, "Failed to detect project root");
 
-    fncount = Shakefile_detect_functions(projfile, 255, fns);
+    rc = Runscripts_find_script(cmd_name, cwd, &runscript);
+    if (rc == 0) {
+        check(runscript != NULL, "runscript was null");
+        rc = Runner_run(runscript, cwd, argv);
+    }
 
-    scripts.cwd = cwd;
-
-    if (script_name) {
-        char *fn = NULL;
-        for (i = 0; i < fncount; i++) {
-            if (strcmp(fns[i], script_name) == 0) {
-                fn = fns[i];
-                break;
-            }
-        }
-
-        // does not return on success
-        if (fn != NULL) {
-            return Runner_runfn(fn, cwd, argc, argv);
-        } else {
-            return Runner_run(script_name, cwd, argv);
-        }
+    if (Shakefile_has_fn(cmd_name, projfile)) {
+        rc = Runner_runfn(cmd_name, cwd, argc, argv);
     }
 
 error:
-    Scripts_destroy(&scripts);
+    free(runscript);
     free(projfile);
     free(cwd);
 

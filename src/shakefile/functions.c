@@ -5,6 +5,7 @@
 #include "../dbg.h"
 #include "shakefile.h"
 #include <bstrlib.h>
+#include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -58,4 +59,26 @@ int Shakefile_detect_functions(char *projfile, size_t size, char *fns[])
 
 error:
     return -1;
+}
+
+int Shakefile_has_fn(char *name, char *projfile)
+{
+    int i;
+    int rb = 0; // 0 for false
+    int fncount = 0;
+    char *fns[255];
+
+    fncount = Shakefile_detect_functions(projfile, 255, fns);
+
+    for (i = 0; i < fncount; i++) {
+        if (strcmp(fns[i], name) == 0) {
+            rb = 1;
+            break;
+        }
+    }
+
+    for (i = 0; i < fncount; i++)
+        free(fns[i]);
+
+    return rb;
 }

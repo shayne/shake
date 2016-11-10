@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="shake" type="CMakeRunConfiguration" factoryName="Application" singleton="true" PROGRAM_PARAMS="foo" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="shake" TARGET_NAME="shake" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="shake" RUN_TARGET_NAME="shake">
+    <envs />
+    <method />
+  </configuration>
+</component>

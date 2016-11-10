@@ -5,17 +5,10 @@
 #include "dbg.h"
 #include "runner.h"
 
-int Runner_run(char *script_name, char *cwd, char *argv[])
+int Runner_run(char *path, char *cwd, char *argv[])
 {
-    char *cmd;
-    asprintf(&cmd, "scripts/run-%s.sh", script_name);
-    check(cmd != NULL, "failed to screate script");
-
     chdir(cwd);
-    return execv(cmd, argv);
-
-error:
-    return -1;
+    return execv(path, argv);
 }
 
 int Runner_runfn(char *fn, char *cwd, int argc, char *argv[])
@@ -30,7 +23,6 @@ int Runner_runfn(char *fn, char *cwd, int argc, char *argv[])
     int eargc = sizeof(eargv) / sizeof(char *);
     int rargc = argc - 1;
 
-    //        char **xargv = calloc(eargc + rargc, sizeof(char *));
     char *xargv[255]; // = { 0 };
 
     memcpy(&xargv[0], &eargv[0], eargc * sizeof(char *));

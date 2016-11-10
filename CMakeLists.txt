@@ -28,7 +28,7 @@ set(SOURCE_FILES
         src/shakefile/shakefile.h
         src/shakefile/functions.c
         src/shakefile/project.c
-        )
+        src/runscripts/runscripts.c src/runscripts/runscripts.h)
 
 add_executable(shake ${SOURCE_FILES})
 target_link_libraries(shake vendor)
