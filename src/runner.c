@@ -13,7 +13,9 @@ int Runner_run(char *path, char *cwd, char *argv[])
 
 int Runner_runfn(char *fn, char *cwd, int argc, char *argv[])
 {
+    char *tmp;
     char *cmd;
+
     asprintf(&cmd, "cmd-%s $@", fn);
     check(cmd != NULL, "failed to function name");
 
@@ -23,10 +25,14 @@ int Runner_runfn(char *fn, char *cwd, int argc, char *argv[])
     int eargc = sizeof(eargv) / sizeof(char *);
     int rargc = argc - 1;
 
-    char *xargv[255]; // = { 0 };
+    char **xargv = malloc((eargc + rargc) * sizeof(char *));
+    check_mem(xargv);
 
-    memcpy(&xargv[0], &eargv[0], eargc * sizeof(char *));
+    tmp = memcpy(&xargv[0], &eargv[0], eargc * sizeof(char *));
+    check_mem(tmp);
     memcpy(&xargv[eargc - 1], &argv[1], rargc * sizeof(char *));
+    check_mem(tmp);
+
     chdir(cwd);
     return execvp("bash", xargv);
 
