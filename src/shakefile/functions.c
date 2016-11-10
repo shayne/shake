@@ -47,7 +47,10 @@ int Shakefile_detect_functions(char *projfile, size_t size, char *fns[])
         btrimws(line);
         bdelete(line, 0, 4); // remove "cmd-"
 
-        fns[i++] = strdup(bdata(line));
+	char *fn = bdata(line);
+        check(fn != NULL, "bdata line was null.");
+
+        fns[i++] = strdup(fn);
         check(i < size, "too many functions");
 
         bdestroy(line);

@@ -6,7 +6,7 @@
 #include "shakefile.h"
 #include <stdlib.h>
 #include <sys/param.h>
-#include <zconf.h>
+#include <unistd.h>
 
 #define SHAKEFILE_NAME "Shakefile"
 
