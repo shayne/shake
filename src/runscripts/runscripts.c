@@ -3,6 +3,7 @@
 //
 
 #include "../dbg.h"
+#include <libgen.h>
 #include <glob.h>
 #include <stdlib.h>
 
