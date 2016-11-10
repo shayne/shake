@@ -16,19 +16,13 @@ set(CMAKE_C_FLAGS "-D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED -D_GNU_SOURCE -fgnu8
 
 set(SOURCE_FILES
         src/dbg.h
-        src/keyvaluevec.c
-        src/keyvaluevec.h
         src/main.c
         src/runner.c
         src/runner.h
-        src/script.c
-        src/script.h
-        src/scripts.c
-        src/scripts.h
         src/shakefile/shakefile.h
         src/shakefile/functions.c
         src/shakefile/project.c
-        src/runscripts/runscripts.c src/runscripts/runscripts.h)
+        src/runscripts/runscripts.c src/runscripts/runscripts.h src/colors.h)
 
 add_executable(shake ${SOURCE_FILES})
 target_link_libraries(shake vendor)

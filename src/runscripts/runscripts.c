@@ -2,9 +2,10 @@
 // Created by shayne on 11/9/16.
 //
 
+#include "../colors.h"
 #include "../dbg.h"
-#include <libgen.h>
 #include <glob.h>
+#include <libgen.h>
 #include <malloc.h>
 
 char *makescriptname(char *path)
@@ -71,4 +72,30 @@ error: // fallthrough
     free(pat);
 
     return rc;
+}
+
+void Runscripts_print_scripts(char *cwd)
+{
+    int i;
+    int rc;
+    glob_t globbuf;
+
+    char *pat = NULL;
+    rc = asprintf(&pat, "%s/scripts/run-*", cwd); // FIXME: hardcoding
+    check(rc > 0, "failed to format string");
+
+    rc = glob(pat, 0, NULL, &globbuf);
+    check(rc == 0, "glob failed");
+
+    for (i = 0; i < globbuf.gl_pathc; i++) {
+        char *gl_path = globbuf.gl_pathv[i];
+        char *script_name = makescriptname(gl_path);
+        printf(TC_RED("-") " " TC_GREEN("%s") "\n", script_name);
+        printf("-- " TC_MAGENTA("%s") "\n", gl_path);
+        free(script_name);
+    }
+
+error: // fallthrough
+    globfree(&globbuf);
+    free(pat);
 }

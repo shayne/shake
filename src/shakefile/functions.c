@@ -2,6 +2,7 @@
 // Created by shayne on 11/7/16.
 //
 
+#include "../colors.h"
 #include "../dbg.h"
 #include "shakefile.h"
 #include <bstrlib.h>
@@ -81,4 +82,22 @@ int Shakefile_has_fn(char *name, char *projfile)
         free(fns[i]);
 
     return rb;
+}
+
+void Shakefile_print_fns(char *projfile)
+{
+    int i;
+    int rc;
+    int fncount;
+    char *fns[255];
+
+    fncount = Shakefile_detect_functions(projfile, 255, fns);
+
+    for (i = 0; i < fncount; i++) {
+        printf(TC_RED("-") " " TC_GREEN("%s") "\n", fns[i]);
+        printf("-- " TC_MAGENTA("Shakefile") "\n");
+    }
+
+    for (i = 0; i < fncount; i++)
+        free(fns[i]);
 }

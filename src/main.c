@@ -7,52 +7,26 @@
 
 #include "runner.h"
 #include "runscripts/runscripts.h"
-#include "scripts.h"
 #include "shakefile/shakefile.h"
-
-#define TCOLOR(C, S) C S TC_CLEAR
-#define TC_CLEAR "\x1b[0m"
-#define TC_RED(S) TCOLOR("\x1b[31m", S)
-#define TC_GREEN(S) TCOLOR("\x1b[32m", S)
-#define TC_YELLOW(S) TCOLOR("\x1b[33m", S)
-#define TC_BLUE(S) TCOLOR("\x1b[34m", S)
-#define TC_MAGENTA(S) TCOLOR("\x1b[35m", S)
-#define TC_CYAN(S) TCOLOR("\x1b[36m", S)
 
 void print_fns()
 {
-    int i;
     int rc;
-    int fncount;
-    char *fns[255];
-    struct Scripts scripts = { 0 };
+    char *projfile = NULL;
+    char *cwd = NULL;
 
-    char *projfile = Shakefile_find_projfile(&rc);
-
-    Scripts_scan(&scripts);
-
+    projfile = Shakefile_find_projfile(&rc);
     check(rc == 0, "Failed to detect project root");
-    fncount = Shakefile_detect_functions(projfile, 255, fns);
+    cwd = dirname(strdup(projfile));
 
-    KeyValueNode *node = NULL;
-    while ((node = Scripts_nextfile(&scripts)) != NULL) {
-        printf(TC_RED("-") " " TC_GREEN("%s") "\n", node->key);
-        Script *script = node->value;
-        printf("-- " TC_MAGENTA("%s") "\n", Script_path(script));
-    }
-
-    for (i = 0; i < fncount; i++) {
-        printf(TC_RED("-") " " TC_GREEN("%s") "\n", fns[i]);
-        printf("-- " TC_MAGENTA("Shakefile") "\n");
-    }
-
-    free(projfile);
-    Scripts_destroy(&scripts);
-    for (i = 0; i < fncount; i++)
-        free(fns[i]);
+    Runscripts_print_scripts(cwd);
+    Shakefile_print_fns(projfile);
 
 error:
-    return;
+    if (cwd)
+        free(cwd);
+    if (projfile)
+        free(projfile);
 }
 
 int run_script(char *cmd_name, int argc, char *argv[])
