@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 
     rc = run_script(script_name, argc, &argv[1]);
     if (rc != 0) {
-        fprintf(stderr, "Unknown script/fn: %s'\n", script_name);
+        fprintf(stderr, "Unknown script/fn: '%s'\n", script_name);
     }
 
     return 0;
