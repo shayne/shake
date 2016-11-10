@@ -5,7 +5,7 @@
 #include "../dbg.h"
 #include <libgen.h>
 #include <glob.h>
-#include <stdlib.h>
+#include <malloc.h>
 
 char *makescriptname(char *path)
 {

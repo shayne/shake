@@ -28,9 +28,7 @@ void print_fns()
     struct Scripts scripts = { 0 };
 
     char *projfile = Shakefile_find_projfile(&rc);
-    char *cwd = dirname(strdup(projfile));
 
-    scripts.cwd = cwd;
     Scripts_scan(&scripts);
 
     check(rc == 0, "Failed to detect project root");
@@ -49,7 +47,6 @@ void print_fns()
     }
 
     free(projfile);
-    free(cwd);
     Scripts_destroy(&scripts);
     for (i = 0; i < fncount; i++)
         free(fns[i]);
