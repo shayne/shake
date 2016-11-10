@@ -7,7 +7,7 @@
 #include <glob.h>
 #include <stdlib.h>
 
-#ifdef TARGET_OS_X
+#ifdef __APPLE__
 #include <libgen.h>
 #endif
 
