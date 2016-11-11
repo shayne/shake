@@ -53,10 +53,10 @@ char *Shakefile_find_projfile(int *success)
     char cwd[PATH_MAX];
 
     ret = getcwd(cwd, PATH_MAX);
-    check(ret != NULL, "getcwd failed");
+    check_debug(ret != NULL, "getcwd failed");
 
     ret = search_up(SHAKEFILE_NAME, cwd);
-    check(ret != NULL, "Failed to search up");
+    check_debug(ret != NULL, "Failed to search up");
 
     *success = 0;
     return ret;

@@ -9,14 +9,14 @@
 #include "runscripts/runscripts.h"
 #include "shakefile/shakefile.h"
 
-void print_fns()
+int print_fns()
 {
     int rc;
     char *projfile = NULL;
     char *cwd = NULL;
 
     projfile = Shakefile_find_projfile(&rc);
-    check(rc == 0, "Failed to detect project root");
+    check_debug(rc == 0, "Failed to find project file");
     cwd = dirname(strdup(projfile));
 
     Runscripts_print_scripts(cwd);
@@ -27,6 +27,8 @@ error:
         free(cwd);
     if (projfile)
         free(projfile);
+
+    return rc;
 }
 
 int run_script(char *cmd_name, int argc, char *argv[])
@@ -61,12 +63,20 @@ int main(int argc, char *argv[])
     int rc;
 
     if (argc == 1) {
-        print_fns();
+        rc = print_fns();
+        if (rc != 0) {
+            printf(
+                "It appears this directory, or its parent directories, "
+                "have not been setup to run shake.\n");
+            printf(
+                "To start using shake run:\n"
+                "$ shake --init\n");
+        }
         return 0;
     }
 
     if (argv[1][0] == '-') {
-        fprintf(stderr, "Flag passed: %s", argv[1]);
+        fprintf(stderr, "Flag passed: %s\n", argv[1]);
         return 1;
     }
 
