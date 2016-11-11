@@ -38,7 +38,7 @@ int run_script(char *cmd_name, int argc, char *argv[])
 
     char *projfile = Shakefile_find_projfile(&rc);
     char *cwd = dirname(strdup(projfile));
-    check(rc == 0, "Failed to detect project root");
+    check_debug(rc == 0, "Failed to detect project root");
 
     rc = Runscripts_find_script(cmd_name, cwd, &runscript);
     if (rc == 0) {
@@ -58,6 +58,21 @@ error:
     return rc;
 }
 
+void print_usage()
+{
+    printf("TODO: usage\n");
+}
+
+void print_no_project()
+{
+    printf(
+        "It appears this directory, or its parent directories, "
+        "have not been setup to run shake.\n");
+    printf(
+        "To start using shake run:\n"
+        "$ shake --init\n");
+}
+
 int main(int argc, char *argv[])
 {
     int rc;
@@ -65,12 +80,8 @@ int main(int argc, char *argv[])
     if (argc == 1) {
         rc = print_fns();
         if (rc != 0) {
-            printf(
-                "It appears this directory, or its parent directories, "
-                "have not been setup to run shake.\n");
-            printf(
-                "To start using shake run:\n"
-                "$ shake --init\n");
+            print_usage();
+            print_no_project();
         }
         return 0;
     }
@@ -81,11 +92,10 @@ int main(int argc, char *argv[])
     }
 
     char *script_name = argv[1];
-
     rc = run_script(script_name, argc, &argv[1]);
     if (rc != 0) {
         fprintf(stderr, "Unknown script/fn: '%s'\n", script_name);
+        return 1;
     }
-
     return 0;
 }
