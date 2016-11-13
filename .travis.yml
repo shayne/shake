@@ -1,7 +1,7 @@
 language: c
 
 compiler:
-    - gcc
+    - gcc-6
 
 script:
     - mkdir build
