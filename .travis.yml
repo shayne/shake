@@ -5,7 +5,7 @@ apt:
         - gcc-6
 
 compiler:
-    - gcc
+    - gcc-6
 
 script:
     - mkdir build
