@@ -1,7 +1,11 @@
 language: c
 
+apt:
+    packages:
+        - gcc-6
+
 compiler:
-    - gcc-6
+    - gcc
 
 script:
     - mkdir build
