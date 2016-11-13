@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(shake)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
-
 include_directories("${PROJECT_SOURCE_DIR}/vendor")
 
 set(VENDOR_FILES
@@ -22,7 +20,7 @@ set(SOURCE_FILES
         src/shakefile/shakefile.h
         src/shakefile/functions.c
         src/shakefile/project.c
-        src/runscripts/runscripts.c src/runscripts/runscripts.h src/colors.h)
+        src/runscripts/runscripts.c src/runscripts/runscripts.h src/colors.h src/shakefile/shakefile.c)
 
 add_executable(shake ${SOURCE_FILES})
 target_link_libraries(shake vendor)

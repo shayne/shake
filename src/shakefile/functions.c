@@ -6,11 +6,11 @@
 #include "../dbg.h"
 #include "shakefile.h"
 #include <bstrlib.h>
-#include <stdlib.h>
+#include <stdlib.h> // needed?
 #include <sys/wait.h>
 #include <unistd.h>
 
-int Shakefile_detect_functions(char *projfile, size_t size, char *fns[])
+int Shakefile_detect_functions(size_t size, char *fns[])
 {
     pid_t pid;
     int pipes[2];
@@ -29,10 +29,11 @@ int Shakefile_detect_functions(char *projfile, size_t size, char *fns[])
                "bash",
                "-c",
                "source $0 && $@",
-               projfile,
+               gShakefile.projfile,
                "compgen",
                "-A",
                "function",
+               gShakefile.cmd_prefix,
                NULL);
         perror("execlp");
         _exit(1);
@@ -45,7 +46,7 @@ int Shakefile_detect_functions(char *projfile, size_t size, char *fns[])
     FILE *stdout = fdopen(pipes[0], "r");
     while ((line = bgets((bNgetc)fgetc, stdout, '\n')) != NULL) {
         btrimws(line);
-        bdelete(line, 0, 4); // remove "cmd-"
+        bdelete(line, 0, gShakefile.cmd_prefix_len);
 
         char *fn = bdata(line);
         check(fn != NULL, "bdata line was null.");
@@ -65,14 +66,14 @@ error:
     return -1;
 }
 
-int Shakefile_has_fn(char *name, char *projfile)
+int Shakefile_has_fn(char *name)
 {
     int i;
     int rb = 0; // 0 for false
     int fncount = 0;
     char *fns[255];
 
-    fncount = Shakefile_detect_functions(projfile, 255, fns);
+    fncount = Shakefile_detect_functions(255, fns);
 
     for (i = 0; i < fncount; i++) {
         if (strcmp(fns[i], name) == 0) {
@@ -87,14 +88,13 @@ int Shakefile_has_fn(char *name, char *projfile)
     return rb;
 }
 
-void Shakefile_print_fns(char *projfile)
+void Shakefile_print_fns()
 {
     int i;
-    int rc;
     int fncount;
     char *fns[255];
 
-    fncount = Shakefile_detect_functions(projfile, 255, fns);
+    fncount = Shakefile_detect_functions(255, fns);
 
     for (i = 0; i < fncount; i++) {
         printf(TC_RED("-") " " TC_GREEN("%s") "\n", fns[i]);

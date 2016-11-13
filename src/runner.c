@@ -4,6 +4,7 @@
 
 #include "dbg.h"
 #include "runner.h"
+#include "shakefile/shakefile.h"
 
 int Runner_run(char *path, char *cwd, char *argv[])
 {
@@ -16,7 +17,7 @@ int Runner_runfn(char *fn, char *cwd, int argc, char *argv[])
     char *tmp;
     char *cmd;
 
-    asprintf(&cmd, "cmd-%s $@", fn);
+    asprintf(&cmd, "%s%s $@", gShakefile.cmd_prefix, fn);
     check(cmd != NULL, "failed to function name");
 
     char *eargv[] = { "bash", "--rcfile", "Shakefile", "-i",

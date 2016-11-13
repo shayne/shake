@@ -15,12 +15,8 @@ int print_fns()
     char *projfile = NULL;
     char *cwd = NULL;
 
-    projfile = Shakefile_find_projfile(&rc);
-    check_debug(rc == 0, "Failed to find project file");
-    cwd = dirname(strdup(projfile));
-
-    Runscripts_print_scripts(cwd);
-    Shakefile_print_fns(projfile);
+    Runscripts_print_scripts();
+    Shakefile_print_fns();
 
 error:
     if (cwd)
@@ -40,13 +36,13 @@ int run_script(char *cmd_name, int argc, char *argv[])
     char *cwd = dirname(strdup(projfile));
     check_debug(rc == 0, "Failed to detect project root");
 
-    rc = Runscripts_find_script(cmd_name, cwd, &runscript);
+    rc = Runscripts_find_script(cmd_name, &runscript);
     if (rc == 0) {
         check(runscript != NULL, "runscript was null");
         rc = Runner_run(runscript, cwd, argv);
     }
 
-    if (Shakefile_has_fn(cmd_name, projfile)) {
+    if (Shakefile_has_fn(cmd_name)) {
         rc = Runner_runfn(cmd_name, cwd, argc, argv);
     }
 
@@ -73,7 +69,7 @@ void print_no_project()
         "$ shake --init\n");
 }
 
-int main(int argc, char *argv[])
+int _main(int argc, char *argv[])
 {
     int rc;
 
@@ -97,5 +93,17 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Unknown script/fn: '%s'\n", script_name);
         return 1;
     }
+
     return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    int rc;
+
+    Shakefile_init();
+    rc = _main(argc, argv);
+    Shakefile_destroy();
+
+    return rc;
 }

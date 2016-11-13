@@ -8,9 +8,16 @@ addons:
     apt:
         sources:
             - ubuntu-toolchain-r-test
-        packages:
-            gcc-4.8
+    packages: gcc-4.8
 script:
     - mkdir build
     - cd build
     - cmake .. && make
+deploy:
+    provider: releases
+    api_key:
+        secure: meZonuxoise35i+SUhYnJujfKRyZpWeVX+T2Ey1NA6WPyE+ydgU16Ab0f4NKbCbayiuPzv8TJ4pwg13XW18T0DC/tAjmsB0f9T3YBf/6dNWg/YnnLObz5aBr1ihSR82rQCiGDv8akfhAt9vz4mNcQBXE99NcTXegePDMmihdXAX15rTLeBphaC6zt209+NeXLo0a1pY4hP7umJ6jvEPrvW+V0rhoG2AgzUMEqC8MjK4CABQWBzeWTlaLLG2nouuqcYQS1p3FCg27yRav3iZzIwhCizJlD9hBVNsZ9dUcwpmGNknJQnLrOJ9tPbAd6TIqVifjEb9i0BM4n6RZC58kfDeiUbR+dCdX3DnUsVnAYJIzLRjRIjGcZDUVNDk4TZ9lOJrOrLnd2drwjIN3Ka16CNfgshIzxFPCH5lK49AIstGXRRBcTrGhmfPgNnwrylDxatXPWSaIdIlIdxQv+0SUlRRklq/cQVzNVMOwmGv9cFNa9mYDrzUZPYlGif9OagSVn/F7ayaXQ6toP1dy68wL0zLoAIX30NucVJGAS0TgIohoMXoo0Ch+Z18GlAd6VsFEZQTlNUGoQviLh3xOqION5TvJ2JGUuBexDNNOSCy6iIDBn068L3h5QC/tetQH3WQsdpAdYl2SuwITSnGPqrOt3WSzkVC+xrVObi/vkZiLfRw=
+    file: shake
+    skip_cleanup: true
+    on:
+        tags: true

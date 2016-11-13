@@ -4,8 +4,9 @@
 
 #include "../colors.h"
 #include "../dbg.h"
+#include "../shakefile/shakefile.h"
 #include <glob.h>
-#include <stdlib.h>
+#include <stdlib.h> // needed
 
 #ifdef __APPLE__
 #include <libgen.h>
@@ -17,9 +18,8 @@ char *makescriptname(char *path)
     char *path_cp = NULL;
     char *path_base = basename(path_cp = strdup(path));
 
-    // FIXME: remove "cmd-" prefix
-    int prefpos = 4;
-    size_t cplen = strlen(path_base) - 4;
+    int prefpos = gShakefile.cmd_prefix_len;
+    size_t cplen = strlen(path_base) - prefpos;
     memcpy(&path_base[0], &path_base[prefpos], cplen);
     path_base[cplen] = '\0';
 
@@ -36,14 +36,14 @@ error: // fallthrough
     return out;
 }
 
-int Runscripts_find_script(char *cmd_name, char *cwd, char **out)
+int Runscripts_find_script(char *cmd_name, char **out)
 {
     int i;
     int rc;
     glob_t globbuf;
 
     char *pat = NULL;
-    rc = asprintf(&pat, "%s/scripts/run-*", cwd); // FIXME: hardcoding
+    rc = asprintf(&pat, "%s/%s/%s*", gShakefile.projdir, gShakefile.cmd_dir, gShakefile.cmd_prefix);
     check(rc > 0, "failed to format string");
 
     rc = glob(pat, 0, NULL, &globbuf);
@@ -77,18 +77,18 @@ error: // fallthrough
     return rc;
 }
 
-void Runscripts_print_scripts(char *cwd)
+void Runscripts_print_scripts()
 {
     int i;
     int rc;
     glob_t globbuf;
 
     char *pat = NULL;
-    rc = asprintf(&pat, "%s/scripts/run-*", cwd); // FIXME: hardcoding
-    check(rc > 0, "failed to format string");
+    asprintf(&pat, "%s/%s/%s*", gShakefile.projdir, gShakefile.cmd_dir, gShakefile.cmd_prefix);
+    check_mem(pat);
 
     rc = glob(pat, 0, NULL, &globbuf);
-    check(rc == 0, "glob failed");
+    check_debug(rc == 0, "No scripts.");
 
     for (i = 0; i < globbuf.gl_pathc; i++) {
         char *gl_path = globbuf.gl_pathv[i];
