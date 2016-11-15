@@ -28,7 +28,7 @@ BreakBeforeBraces: Linux
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: false
 #uncomment for clang 3.9
-#BreakStringLiterals: false
+BreakStringLiterals: false
 ColumnLimit: 80
 CommentPragmas:  '\*\<'
 ConstructorInitializerAllOnOneLineOrOnePerLine: false

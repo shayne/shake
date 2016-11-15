@@ -98,8 +98,7 @@ void Shakefile_print_fns()
     fncount = Shakefile_detect_functions(255, fns);
 
     for (i = 0; i < fncount; i++) {
-        printf(TC_RED("-") " " TC_GREEN("%s") "\n", fns[i]);
-        printf("-- " TC_MAGENTA("Shakefile") "\n");
+        printf(ANSI_GREEN("%s") " %s\n", fns[i], "description");
     }
 
     for (i = 0; i < fncount; i++)

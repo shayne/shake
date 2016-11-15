@@ -103,8 +103,7 @@ void Runscripts_print_scripts()
     for (i = 0; i < globbuf.gl_pathc; i++) {
         char *gl_path = globbuf.gl_pathv[i];
         char *script_name = makescriptname(gl_path);
-        printf(TC_RED("-") " " TC_GREEN("%s") "\n", script_name);
-        printf("-- " TC_MAGENTA("%s") "\n", gl_path);
+        printf(ANSI_GREEN("%s") "\t%s\n", script_name, "description");
         free(script_name);
     }
 
