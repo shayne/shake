@@ -12,9 +12,8 @@ matrix:
           env: CC=gcc-4.9
 
 script:
-    - mkdir build
-    - cd build
-    - cmake .. && make
+    - mkdir build && cd build
+    - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo .. && make
 
 before_deploy:
     - mv shake shake-$TRAVIS_OS_NAME
