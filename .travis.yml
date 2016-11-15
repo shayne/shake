@@ -1,14 +1,6 @@
-sudo: false
-
-os:
-    - linux
-    - osx
-
 language: c
 
-compiler:
-    - gcc
-    - clang
+sudo: false
 
 matrix:
     include:
