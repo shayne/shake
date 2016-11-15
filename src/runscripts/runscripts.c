@@ -89,11 +89,12 @@ void Runscripts_print_scripts()
     glob_t globbuf;
 
     char *pat = NULL;
-    asprintf(&pat,
-             "%s/%s/%s*",
-             config.proj_dir,
-             config.cmd_dir,
-             config.cmd_prefix);
+    rc = asprintf(&pat,
+                  "%s/%s/%s*",
+                  config.proj_dir,
+                  config.cmd_dir,
+                  config.cmd_prefix);
+    check(rc > 0, "asprintf failed");
     check_mem(pat);
 
     rc = glob(pat, 0, NULL, &globbuf);

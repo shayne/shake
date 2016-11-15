@@ -8,16 +8,22 @@
 
 int Runner_run(char *path, char *cwd, char *argv[])
 {
-    chdir(cwd);
+    int rc;
+    rc = chdir(cwd);
+    check(rc == 0, "chdir failed");
     return execv(path, argv);
+error:
+    return rc;
 }
 
 int Runner_runfn(char *fn, char *cwd, int argc, char *argv[])
 {
+    int rc;
     char *tmp;
     char *cmd;
 
-    asprintf(&cmd, "%s%s $@", config.cmd_prefix, fn);
+    rc = asprintf(&cmd, "%s%s $@", config.cmd_prefix, fn);
+    check(rc > 0, "asprintf failed");
     check(cmd != NULL, "failed to function name");
 
     char *eargv[] = { "bash", "--rcfile", "Shakefile", "-i",
@@ -34,7 +40,8 @@ int Runner_runfn(char *fn, char *cwd, int argc, char *argv[])
     memcpy(&xargv[eargc - 1], &argv[1], rargc * sizeof(char *));
     check_mem(tmp);
 
-    chdir(cwd);
+    rc = chdir(cwd);
+    check(rc == 0, "chdir failed");
     return execvp("bash", xargv);
 
 error:
