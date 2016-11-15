@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="shake" type="CMakeRunConfiguration" factoryName="Application" singleton="true" WORKING_DIR="file:///run/media/shayne/Data/go/src/github.com/shayne/zwave" PASS_PARENT_ENVS_2="true" PROJECT_NAME="shake" TARGET_NAME="shake" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="shake" RUN_TARGET_NAME="shake">
+  <configuration default="false" name="shake" type="CMakeRunConfiguration" factoryName="Application" singleton="true" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="shake" TARGET_NAME="shake" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="shake" RUN_TARGET_NAME="shake">
     <envs />
     <method />
   </configuration>

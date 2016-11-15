@@ -3,6 +3,7 @@
 //
 
 #include "../colors.h"
+#include "../config.h"
 #include "../dbg.h"
 #include "../shakefile/shakefile.h"
 #include <glob.h>
@@ -18,7 +19,7 @@ char *makescriptname(char *path)
     char *path_cp = NULL;
     char *path_base = basename(path_cp = strdup(path));
 
-    int prefpos = gShakefile.cmd_prefix_len;
+    int prefpos = config.cmd_prefix_len;
     size_t cplen = strlen(path_base) - prefpos;
     memcpy(&path_base[0], &path_base[prefpos], cplen);
     path_base[cplen] = '\0';
@@ -43,7 +44,11 @@ int Runscripts_find_script(char *cmd_name, char **out)
     glob_t globbuf;
 
     char *pat = NULL;
-    rc = asprintf(&pat, "%s/%s/%s*", gShakefile.projdir, gShakefile.cmd_dir, gShakefile.cmd_prefix);
+    rc = asprintf(&pat,
+                  "%s/%s/%s*",
+                  config.proj_dir,
+                  config.cmd_dir,
+                  config.cmd_prefix);
     check(rc > 0, "failed to format string");
 
     rc = glob(pat, 0, NULL, &globbuf);
@@ -84,7 +89,11 @@ void Runscripts_print_scripts()
     glob_t globbuf;
 
     char *pat = NULL;
-    asprintf(&pat, "%s/%s/%s*", gShakefile.projdir, gShakefile.cmd_dir, gShakefile.cmd_prefix);
+    asprintf(&pat,
+             "%s/%s/%s*",
+             config.proj_dir,
+             config.cmd_dir,
+             config.cmd_prefix);
     check_mem(pat);
 
     rc = glob(pat, 0, NULL, &globbuf);

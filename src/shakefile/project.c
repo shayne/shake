@@ -47,7 +47,7 @@ char *search_up(char *filename, char *startdir)
     return NULL;
 }
 
-char *Shakefile_find_projfile(int *success)
+char *Shakefile_find_projfile(void)
 {
     char *ret;
     char cwd[PATH_MAX];
@@ -58,10 +58,8 @@ char *Shakefile_find_projfile(int *success)
     ret = search_up(SHAKEFILE_NAME, cwd);
     check_debug(ret != NULL, "Failed to search up");
 
-    *success = 0;
     return ret;
 
 error:
-    *success = -1;
     return NULL;
 }

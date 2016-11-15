@@ -1,16 +1,18 @@
 #!/bin/bash
 
-function cmd-foo()
+SCRIPTS_PREFIX="run-"
+
+function run-foo()
 {
     echo "cmd-foo: calling ./shake test"
     echo "-->arg0: $0"
     echo "-->arg1: $1"
     echo "-->arg2: $2"
     echo "-->arg3: $3"
-    ./shake test arg1 arg2 arg3
+    ./bin/Debug/shake test arg1 arg2 arg3
 }
 
-function cmd-bar()
+function run-bar()
 {
     echo "cmd-bar: calling ./shake test"
     echo "-->arg0: $0"

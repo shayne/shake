@@ -5,26 +5,17 @@
 
 #include "dbg.h"
 
+#include "config.h"
 #include "runner.h"
 #include "runscripts/runscripts.h"
 #include "shakefile/shakefile.h"
 
-int print_fns()
-{
-    int rc;
-    char *projfile = NULL;
-    char *cwd = NULL;
+struct shakeConfig config;
 
+void print_fns()
+{
     Runscripts_print_scripts();
     Shakefile_print_fns();
-
-error:
-    if (cwd)
-        free(cwd);
-    if (projfile)
-        free(projfile);
-
-    return rc;
 }
 
 int run_script(char *cmd_name, int argc, char *argv[])
@@ -32,9 +23,8 @@ int run_script(char *cmd_name, int argc, char *argv[])
     int rc;
     char *runscript = NULL;
 
-    char *projfile = Shakefile_find_projfile(&rc);
+    char *projfile = Shakefile_find_projfile();
     char *cwd = dirname(strdup(projfile));
-    check_debug(rc == 0, "Failed to detect project root");
 
     rc = Runscripts_find_script(cmd_name, &runscript);
     if (rc == 0) {
@@ -69,41 +59,44 @@ void print_no_project()
         "$ shake --init\n");
 }
 
-int _main(int argc, char *argv[])
+void cleanup()
 {
-    int rc;
-
-    if (argc == 1) {
-        rc = print_fns();
-        if (rc != 0) {
-            print_usage();
-            print_no_project();
-        }
-        return 0;
-    }
-
-    if (argv[1][0] == '-') {
-        fprintf(stderr, "Flag passed: %s\n", argv[1]);
-        return 1;
-    }
-
-    char *script_name = argv[1];
-    rc = run_script(script_name, argc, &argv[1]);
-    if (rc != 0) {
-        fprintf(stderr, "Unknown script/fn: '%s'\n", script_name);
-        return 1;
-    }
-
-    return 0;
+    destroyConfig();
 }
 
 int main(int argc, char *argv[])
 {
     int rc;
 
-    Shakefile_init();
-    rc = _main(argc, argv);
-    Shakefile_destroy();
+    initConfig();
 
-    return rc;
+    char *projfile = Shakefile_find_projfile();
+    if (projfile == NULL) {
+        print_usage();
+        print_no_project();
+        exit(1);
+    }
+
+    loadConfig(projfile);
+    atexit(cleanup); // might not be a good idea
+    free(projfile);
+
+    if (argc == 1) {
+        print_fns();
+        exit(0);
+    }
+
+    if (argv[1][0] == '-') {
+        fprintf(stderr, "Flag passed: %s\n", argv[1]);
+        exit(1);
+    }
+
+    char *script_name = argv[1];
+    rc = run_script(script_name, argc, &argv[1]);
+    if (rc != 0) {
+        fprintf(stderr, "Unknown script/fn: '%s'\n", script_name);
+        exit(1);
+    }
+
+    return 0;
 }

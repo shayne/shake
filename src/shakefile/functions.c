@@ -3,6 +3,7 @@
 //
 
 #include "../colors.h"
+#include "../config.h"
 #include "../dbg.h"
 #include "shakefile.h"
 #include <bstrlib.h>
@@ -29,11 +30,11 @@ int Shakefile_detect_functions(size_t size, char *fns[])
                "bash",
                "-c",
                "source $0 && $@",
-               gShakefile.projfile,
+               config.proj_file,
                "compgen",
                "-A",
                "function",
-               gShakefile.cmd_prefix,
+               config.cmd_prefix,
                NULL);
         perror("execlp");
         _exit(1);
@@ -46,7 +47,7 @@ int Shakefile_detect_functions(size_t size, char *fns[])
     FILE *stdout = fdopen(pipes[0], "r");
     while ((line = bgets((bNgetc)fgetc, stdout, '\n')) != NULL) {
         btrimws(line);
-        bdelete(line, 0, gShakefile.cmd_prefix_len);
+        bdelete(line, 0, config.cmd_prefix_len);
 
         char *fn = bdata(line);
         check(fn != NULL, "bdata line was null.");
