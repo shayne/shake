@@ -81,33 +81,3 @@ error: // fallthrough
 
     return rc;
 }
-
-void Runscripts_print_scripts()
-{
-    int i;
-    int rc;
-    glob_t globbuf;
-
-    char *pat = NULL;
-    rc = asprintf(&pat,
-                  "%s/%s/%s*",
-                  config.proj_dir,
-                  config.cmd_dir,
-                  config.cmd_prefix);
-    check(rc > 0, "asprintf failed");
-    check_mem(pat);
-
-    rc = glob(pat, 0, NULL, &globbuf);
-    check_debug(rc == 0, "No scripts.");
-
-    for (i = 0; i < globbuf.gl_pathc; i++) {
-        char *gl_path = globbuf.gl_pathv[i];
-        char *script_name = makescriptname(gl_path);
-        printf(ANSI_GREEN("%s") "\t%s\n", script_name, "description");
-        free(script_name);
-    }
-
-error: // fallthrough
-    globfree(&globbuf);
-    free(pat);
-}

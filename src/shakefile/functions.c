@@ -2,7 +2,6 @@
 // Created by shayne on 11/7/16.
 //
 
-#include "../colors.h"
 #include "../config.h"
 #include "../dbg.h"
 #include "shakefile.h"
@@ -87,20 +86,4 @@ int Shakefile_has_fn(char *name)
         free(fns[i]);
 
     return rb;
-}
-
-void Shakefile_print_fns()
-{
-    int i;
-    int fncount;
-    char *fns[255];
-
-    fncount = Shakefile_detect_functions(255, fns);
-
-    for (i = 0; i < fncount; i++) {
-        printf(ANSI_GREEN("%s") " %s\n", fns[i], "description");
-    }
-
-    for (i = 0; i < fncount; i++)
-        free(fns[i]);
 }

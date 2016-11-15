@@ -11,10 +11,12 @@
       <sourceFolder url="file://$MODULE_DIR$/src/runner.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/runner.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/dbg.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/commands.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/runscripts/runscripts.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/runscripts/runscripts.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/shake.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/config.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/commands.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vendor" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
     </content>
