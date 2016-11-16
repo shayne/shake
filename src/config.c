@@ -20,6 +20,8 @@ void initConfig(void)
 
 void destroyConfig(void)
 {
+    if (config.proj_dir_s)
+        free(config.proj_dir_s);
     if (config.proj_file)
         free(config.proj_file);
     if (config.cmd_dir != DEFAULT_CMD_DIR)
@@ -38,7 +40,7 @@ void loadConfig(char *filename)
     }
 
     config.proj_file = strdup(filename);
-    config.proj_dir = dirname(filename);
+    config.proj_dir = dirname(config.proj_dir_s = strdup(filename));
 
     bstring line;
     while ((line = bgets((bNgetc)fgetc, fp, '\n')) != NULL) {

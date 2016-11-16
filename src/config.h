@@ -11,6 +11,7 @@
 struct shakeConfig {
     char *proj_file;
     char *proj_dir;
+    char *proj_dir_s;
     char *cmd_dir;
     int cmd_dir_len;
     char *cmd_prefix;
