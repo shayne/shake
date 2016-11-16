@@ -80,6 +80,7 @@ int loadCommands(char ***cmds_out, char ***descs_out)
     glob_t globbuf;
 
     char *fns[MAX_FNS];
+    char *fndescs[MAX_FNS];
 
     char *pat = NULL;
     rc = asprintf(&pat,
@@ -94,6 +95,7 @@ int loadCommands(char ***cmds_out, char ***descs_out)
     check_debug(rc == 0, "glob failed");
 
     fncount = Shakefile_detect_functions(MAX_FNS, fns);
+    Shakefile_detect_descriptions(MAX_FNS, fndescs);
 
     size = fncount + (int)globbuf.gl_pathc;
     cmds = calloc((size_t)(size + 1), sizeof(char *));
@@ -114,6 +116,8 @@ int loadCommands(char ***cmds_out, char ***descs_out)
         char *cmd = strdup(fns[i]);
         check_mem(cmd);
         cmds[off] = cmd;
+        if (fndescs[i])
+            descs[off] = strdup(fndescs[i]);
     }
 
 done: // fallthrough
@@ -122,9 +126,12 @@ done: // fallthrough
 
     globfree(&globbuf);
     free(pat);
-    for (i = 0; i < fncount; i++)
+    for (i = 0; i < fncount; i++) {
         if (fns[i])
             free(fns[i]);
+        if (fndescs[i])
+            free(fndescs[i]);
+    }
 
     return size;
 
@@ -141,6 +148,12 @@ error:
                 free(descs[i]);
         free(descs);
         descs = NULL;
+    }
+    for (i = 0; i < fncount; i++) {
+        if (fns[i])
+            free(fns[i]);
+        if (fndescs[i])
+            free(fndescs[i]);
     }
     size = -1;
     goto done;

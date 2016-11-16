@@ -4,6 +4,7 @@ SCRIPTS_PREFIX="run-"
 
 function run-foo()
 {
+    : run-foo description is this 4/0
     echo "cmd-foo: calling ./shake test"
     echo "-->arg0: $0"
     echo "-->arg1: $1"
@@ -14,6 +15,7 @@ function run-foo()
 
 function run-bar()
 {
+    : i am run bar here me roar
     echo "cmd-bar: calling ./shake test"
     echo "-->arg0: $0"
     echo "-->arg1: $1"

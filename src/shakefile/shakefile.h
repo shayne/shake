@@ -9,6 +9,7 @@
 
 char *Shakefile_find_projfile(void);
 int Shakefile_detect_functions(size_t size, char *fns[]);
+int Shakefile_detect_descriptions(size_t size, char *descs[]);
 int Shakefile_has_fn(char *name);
 
 #endif // SHAKE_SHAKEFILE_H

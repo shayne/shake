@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/config.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/colors.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/shakefile/descriptions.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/shakefile/functions.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/shakefile/project.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/shakefile/shakefile.h" isTestSource="false" />
