@@ -19,10 +19,11 @@ void printCommands()
     int i;
     int rc;
     char **cmds;
+    char **descs;
     char *fmt = NULL;
     int cmdcount = 0;
 
-    cmdcount = loadCommands(&cmds);
+    cmdcount = loadCommands(&cmds, &descs);
     check(cmdcount >= 0, "loadCommands failed");
 
     size_t padding = 0;
@@ -37,12 +38,13 @@ void printCommands()
 
     for (i = 0; i < cmdcount; i++) {
         char *cmd = cmds[i];
+        char *desc = descs[i];
         rc = asprintf(&fmt,
                       "  " ANSI_GREEN("%%s") "%%%lus%%s\n",
                       padding + 2 - strlen(cmd));
         check(rc > 0, "asprintf failed");
         check(fmt != NULL, "asprintf failed");
-        printf(fmt, cmd, "", "description");
+        printf(fmt, cmd, "", desc ? desc : "");
         free(fmt);
         fmt = NULL;
     }
@@ -51,10 +53,15 @@ void printCommands()
 
 error: // fallthrough
     if (cmds) {
-        for (i = 0; i < cmdcount; i++) {
+        for (i = 0; i < cmdcount; i++)
             free(cmds[i]);
-        }
         free(cmds);
+    }
+    if (descs) {
+        for (i = 0; i < cmdcount; i++)
+            if (descs[i])
+                free(descs[i]);
+        free(descs);
     }
     if (fmt)
         free(fmt);
@@ -91,6 +98,7 @@ static void usage(void)
     char *version = "0.0.0";
     fprintf(
         stderr,
+        "\n"
         ANSI_BOLD("shake") " %s\n"
         "\n"
         "  shake " ANSI_PINK("[OPTIONS] ") ANSI_GREEN("[COMMAND] ") ANSI_GRAY("[COMMAND-ARGS]") "\n"
@@ -109,7 +117,24 @@ void print_no_project()
         "have not been setup to run shake.\n");
     printf(
         "To start using shake run:\n"
-        "$ shake --init\n");
+        "  $ shake --init\n\n");
+}
+
+void parseOptions(int argc, char **argv)
+{
+    int i;
+
+    for (i = 1; i < argc; i++) {
+        int lastarg = i == argc - 1;
+
+        if (!strcmp(argv[i], "-h") && lastarg) {
+            usage();
+            exit(1);
+        } else if (!strcmp(argv[i], "--help")) {
+            usage();
+            exit(1);
+        }
+    }
 }
 
 void cleanup()
@@ -140,11 +165,7 @@ int main(int argc, char *argv[])
         exit(0);
     }
 
-    if (argv[1][0] == '-') {
-        fprintf(stderr, "Flag passed: %s\n", argv[1]);
-        usage();
-        exit(1);
-    }
+    parseOptions(argc, argv);
 
     char *script_name = argv[1];
     rc = run_script(script_name, argc, &argv[1]);

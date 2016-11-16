@@ -1,4 +1,5 @@
 #!/bin/bash
+# DESC: foo bar baz
 echo "script-test"
 echo "--> arg0: $0"
 echo "--> arg1: $1"

@@ -2,11 +2,11 @@
 // Created by shayne on 11/7/16.
 //
 
-#include "../dbg.h"
-#include "shakefile.h"
-#include <stdlib.h>
 #include <sys/param.h>
 #include <unistd.h>
+
+#include "../dbg.h"
+#include "shakefile.h"
 
 #define SHAKEFILE_NAME "Shakefile"
 
@@ -56,7 +56,6 @@ char *Shakefile_find_projfile(void)
     check_debug(ret != NULL, "getcwd failed");
 
     ret = search_up(SHAKEFILE_NAME, cwd);
-    check_debug(ret != NULL, "Failed to search up");
 
     return ret;
 
