@@ -123,15 +123,21 @@ void print_no_project()
 void parseOptions(int argc, char **argv)
 {
     int i;
+    int commandpos = -1;
 
     for (i = 1; i < argc; i++) {
         int lastarg = i == argc - 1;
 
-        if (!strcmp(argv[i], "-h") && lastarg) {
+        if (!strcmp(argv[i], "-h")) {
             usage();
             exit(1);
         } else if (!strcmp(argv[i], "--help")) {
             usage();
+            exit(1);
+        } else if (argv[i][0] != '-') {
+            commandpos = i;
+        } else if (argv[i][0] == '-' && i < commandpos) {
+            fprintf(stderr, "Unknown flag/option: '%s'\n", argv[i]);
             exit(1);
         }
     }
