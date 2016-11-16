@@ -5,9 +5,7 @@
 #ifndef SHAKE_COMMANDS_H
 #define SHAKE_COMMANDS_H
 
-#include <argz.h>
-
-error_t loadCommands(char ***out);
+int loadCommands(char ***out);
 void loadCommandsSorted(void);
 
 #endif // SHAKE_COMMANDS_H

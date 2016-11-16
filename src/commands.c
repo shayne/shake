@@ -34,7 +34,7 @@ error: // fallthrough
     return out;
 }
 
-error_t loadCommands(char ***out)
+int loadCommands(char ***out)
 {
     int i;
     int rc;
