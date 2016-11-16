@@ -20,7 +20,7 @@ void printCommands()
     int rc;
     char **cmds;
     char *fmt = NULL;
-    error_t cmdcount = 0;
+    int cmdcount = 0;
 
     cmdcount = loadCommands(&cmds);
     check(cmdcount >= 0, "loadCommands failed");

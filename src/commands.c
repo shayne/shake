@@ -40,7 +40,7 @@ int loadCommands(char ***out)
     int rc;
     int fncount = 0;
     char **cmds = NULL;
-    error_t size = 0;
+    int size = 0;
     glob_t globbuf;
 
     char *fns[MAX_FNS];
