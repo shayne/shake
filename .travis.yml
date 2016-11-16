@@ -16,13 +16,13 @@ script:
     - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo .. && make
 
 before_deploy:
-    - mv shake shake-$TRAVIS_OS_NAME
+    - tar czf "shake-${TRAVIS_OS_NAME}.tar.gz" shake
 
 deploy:
     provider: releases
     api_key:
         secure: meZonuxoise35i+SUhYnJujfKRyZpWeVX+T2Ey1NA6WPyE+ydgU16Ab0f4NKbCbayiuPzv8TJ4pwg13XW18T0DC/tAjmsB0f9T3YBf/6dNWg/YnnLObz5aBr1ihSR82rQCiGDv8akfhAt9vz4mNcQBXE99NcTXegePDMmihdXAX15rTLeBphaC6zt209+NeXLo0a1pY4hP7umJ6jvEPrvW+V0rhoG2AgzUMEqC8MjK4CABQWBzeWTlaLLG2nouuqcYQS1p3FCg27yRav3iZzIwhCizJlD9hBVNsZ9dUcwpmGNknJQnLrOJ9tPbAd6TIqVifjEb9i0BM4n6RZC58kfDeiUbR+dCdX3DnUsVnAYJIzLRjRIjGcZDUVNDk4TZ9lOJrOrLnd2drwjIN3Ka16CNfgshIzxFPCH5lK49AIstGXRRBcTrGhmfPgNnwrylDxatXPWSaIdIlIdxQv+0SUlRRklq/cQVzNVMOwmGv9cFNa9mYDrzUZPYlGif9OagSVn/F7ayaXQ6toP1dy68wL0zLoAIX30NucVJGAS0TgIohoMXoo0Ch+Z18GlAd6VsFEZQTlNUGoQviLh3xOqION5TvJ2JGUuBexDNNOSCy6iIDBn068L3h5QC/tetQH3WQsdpAdYl2SuwITSnGPqrOt3WSzkVC+xrVObi/vkZiLfRw=
-    file: shake-$TRAVIS_OS_NAME
+    file: "shake-${TRAVIS_OS_NAME}.tar.gz"
     skip_cleanup: true
     overwrite: true
     on:
