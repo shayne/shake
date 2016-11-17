@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <termio.h>
+#include <termios.h>
 #include <ctype.h>
 #include <bstrlib.h>
 #include <sys/stat.h>
