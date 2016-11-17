@@ -56,24 +56,27 @@ int Shakefile_detect_descriptions(size_t size, char **descs)
         if (pos != (line->slen - 2))
             goto end;
 
-        bstring nextline;
-        nextline = bgets((bNgetc)fgetc, stdout, '\n');
-        bdestroy(nextline);
-        nextline = bgets((bNgetc)fgetc, stdout, '\n');
+        // increment our index on every fn
+        int idx = i++;
 
-        btrimws(nextline);
-        if (bchar(nextline, 0) != ':') {
-            bdestroy(nextline);
-            i++; // this was a fn so increment the index
+        // skip curly brace line
+        bdestroy(bgets((bNgetc)fgetc, stdout, '\n'));
+
+        bstring commentline = bgets((bNgetc)fgetc, stdout, '\n');
+        btrimws(commentline); // to remove leading whitespace
+        // check if line is a comment line
+        if (bchar(commentline, 0) != ':') {
+            bdestroy(commentline);
             goto end;
         }
 
-        bdelete(nextline, 0, 1); // remove colon
-        btrimws(nextline);
-        bdelete(nextline, nextline->slen - 1, 1); // remove trailing semi-colon
+        bdelete(commentline, 0, 1); // remove colon
+        btrimws(commentline);
+        bdelete(commentline, commentline->slen - 1, 1); // remove trailing
+                                                        // semi-colon
 
-        descs[i++] = bstr2cstr(nextline, '\0');
-        bdestroy(nextline);
+        descs[idx] = bstr2cstr(commentline, '\0');
+        bdestroy(commentline);
 
     end:
         bdestroy(line);
