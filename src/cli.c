@@ -9,7 +9,7 @@
 #include <ctype.h>
 #include <bstrlib.h>
 #include <sys/stat.h>
-#include <limits.h>
+#include <limits.h> // CLion says not needed?
 #include "cli.h"
 #include "colors.h"
 #include "dbg.h"
