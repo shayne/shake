@@ -4,6 +4,9 @@
 
 #include "config.h"
 #include "dbg.h"
+#include "shakefile/shakefile.h"
+#include "log.h"
+#include "util.h"
 #include <bstrlib.h>
 #include <libgen.h>
 #include <stdlib.h>
@@ -30,17 +33,24 @@ void destroyConfig(void)
         free(config.cmd_prefix);
 }
 
-void loadConfig(char *filename)
+void loadConfig()
 {
+
     FILE *fp;
-    fp = fopen(filename, "r");
-    if (fp == NULL) {
-        fprintf(stderr, "Fatal error, can't open config file '%s'", filename);
-        exit(1);
+
+    autofree(char) *projfile = Shakefile_find_projfile();
+    if (projfile == NULL) {
+        return;
     }
 
-    config.proj_file = strdup(filename);
-    config.proj_dir = dirname(config.proj_dir_s = strdup(filename));
+    fp = fopen(projfile, "r");
+    if (fp == NULL) {
+        LOGE("Unable to open config file '%s'\n", projfile);
+        return;
+    }
+
+    config.proj_file = strdup(projfile);
+    config.proj_dir = dirname(config.proj_dir_s = strdup(projfile));
 
     bstring line;
     while ((line = bgets((bNgetc)fgetc, fp, '\n')) != NULL) {

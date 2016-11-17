@@ -20,7 +20,7 @@ set(SOURCE_FILES
         src/shakefile/shakefile.h
         src/shakefile/functions.c
         src/shakefile/project.c
-        src/runscripts/runscripts.c src/runscripts/runscripts.h src/colors.h src/config.c src/config.h src/commands.c src/commands.h src/shakefile/descriptions.c src/cli.c src/cli.h)
+        src/runscripts/runscripts.c src/runscripts/runscripts.h src/colors.h src/config.c src/config.h src/commands.c src/commands.h src/shakefile/descriptions.c src/cli.c src/cli.h src/log.h src/util.h)
 
 add_executable(shake ${SOURCE_FILES})
 target_link_libraries(shake vendor)

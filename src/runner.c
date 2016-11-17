@@ -26,8 +26,8 @@ int Runner_runfn(char *fn, char *cwd, int argc, char *argv[])
     check(rc > 0, "asprintf failed");
     check(cmd != NULL, "failed to function name");
 
-    char *eargv[] = { "bash", "--rcfile", "Shakefile", "-i",
-                      "-c",   cmd,        "Shakefile", NULL };
+    char *eargv[] = { "bash", "--rcfile", SHAKEFILE_NAME, "-i",
+                      "-c",   cmd,        SHAKEFILE_NAME, NULL };
 
     int eargc = sizeof(eargv) / sizeof(char *);
     int rargc = argc - 1;

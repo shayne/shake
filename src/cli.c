@@ -14,6 +14,8 @@
 #include "colors.h"
 #include "dbg.h"
 #include "config.h"
+#include "log.h"
+#include "util.h"
 
 char getch() {
     char buf = 0;
@@ -101,7 +103,7 @@ void cliInitGetConfig(void)
         break;
     }
 
-    // cmd_dir
+    // commandDir
     printf("\n");
     printf(ANSI_BOLD("#2) Specify a command-scripts directory\n"));
     printf("    This directory can be a new or existing one.\n");
@@ -127,7 +129,7 @@ void cliInitGetConfig(void)
 
     free(prompt);
 
-    // cmd_prefix
+    // commandPrefix
     printf(ANSI_BOLD("#3) Specify a command-script prefix\n"));
     printf("    This prefix is used by shake to separate command-scripts from other files in the\n");
     printf("    command-scripts directory. The prefix is not part of the name of the command.\n");
@@ -193,8 +195,29 @@ error:
     fprintf(stderr, COLOR_ERROR("[ERROR]") " Failed init");
 }
 
-void cliInit(void)
+int cliInit(void)
 {
+    if (config.proj_file) {
+        char cwd[PATH_MAX];
+        check(getcwd(cwd, PATH_MAX) != NULL, "getcwd failed");
+
+        autofree(char) *path = NULL;
+        asprintf(&path, "%s/%s", cwd, SHAKEFILE_NAME);
+        check_mem(path);
+
+        if (access(path, F_OK) == 0) {
+            LOGE("Failed to init");
+            LOGW("Path '%s' already configured.", path);
+            LOG("To edit te config file, or a specific command, run:");
+            LOG("  $ shake --edit [COMMAND]");
+            return -1;
+        } else {
+            LOGN();
+            LOGW("Existing shake config file in a parent directory:");
+            LOG("  %s", config.proj_file);
+        }
+    }
+
     printf("\n");
     printf(ANSI_GRAY("This utility will walk you through the basic shake setup process.\n"));
     printf(ANSI_GRAY("It only covers the required configuration, and suggests typical defaults.\n"));
@@ -204,5 +227,8 @@ void cliInit(void)
 
     cliInitGetConfig();
 
-    exit(0);
+    return 0;
+
+error:
+    return -1;
 }

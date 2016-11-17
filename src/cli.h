@@ -5,6 +5,6 @@
 #ifndef SHAKE_CLI_H
 #define SHAKE_CLI_H
 
-void cliInit(void);
+int cliInit(void);
 
 #endif // SHAKE_CLI_H

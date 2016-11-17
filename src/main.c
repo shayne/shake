@@ -12,10 +12,27 @@
 #include "runner.h"
 #include "runscripts/runscripts.h"
 #include "shakefile/shakefile.h"
+#include "log.h"
 
 struct shakeConfig config;
 
-void printCommands()
+static void printUsage()
+{
+    char *version = "0.0.0";
+    fprintf(stderr,
+            "\n"
+                    ANSI_BOLD("shake") " %s\n"
+                    "\n"
+                    "  shake " ANSI_PINK("[OPTIONS] ") ANSI_GREEN("[COMMAND] ") ANSI_GRAY("[COMMAND-ARGS]") "\n"
+                    "\n"
+                    ANSI_BOLD("Options") "\n"
+                    "  " ANSI_PINK("--init") "\tInitialize a new shake project\n"
+                    "  " ANSI_PINK("-h, --help") "\tPrint this help text and exit\n"
+                    "\n",
+            version);
+}
+
+static void printCommands()
 {
     int i;
     int rc;
@@ -23,6 +40,8 @@ void printCommands()
     char **descs;
     char *fmt = NULL;
     int cmdcount = 0;
+
+    printUsage();
 
     cmdcount = loadCommands(&cmds, &descs);
     check(cmdcount >= 0, "loadCommands failed");
@@ -68,7 +87,7 @@ error: // fallthrough
         free(fmt);
 }
 
-int run_script(char *cmd_name, int argc, char *argv[])
+static int run_script(char *cmd_name, int argc, char *argv[])
 {
     int rc;
     char *runscript = NULL;
@@ -94,34 +113,24 @@ error:
     return rc;
 }
 
-static void usage(void)
+static void usage(int rc)
 {
-    char *version = "0.0.0";
-    fprintf(
-        stderr,
-        "\n"
-        ANSI_BOLD("shake") " %s\n"
-        "\n"
-        "  shake " ANSI_PINK("[OPTIONS] ") ANSI_GREEN("[COMMAND] ") ANSI_GRAY("[COMMAND-ARGS]") "\n"
-        "\n"
-        ANSI_BOLD("Options") "\n"
-        "  " ANSI_PINK("--init") "\tInitialize a new shake project\n"
-        "  " ANSI_PINK("-h, --help") "\tPrint this help text and exit\n"
-        "\n",
-        version);
+    printUsage();
+    exit(rc);
 }
 
-void print_no_project()
+static void noproject()
 {
-    printf(
-        "It appears this directory, or its parent directories, "
-        "have not been setup to run shake.\n");
-    printf(
-        "To start using shake run:\n"
-        "  $ shake --init\n\n");
+    fprintf(stderr,
+            "It appears this directory, or its parent directories, "
+                    "have not been setup to run shake.\n");
+    fprintf(stderr,
+            "To start using shake run:\n"
+                    "  $ shake --init\n\n");
+    usage(1);
 }
 
-void parseOptions(int argc, char **argv)
+static int parseOptions(int argc, char **argv)
 {
     int i;
     int commandpos = -1;
@@ -130,23 +139,22 @@ void parseOptions(int argc, char **argv)
         int lastarg = i == argc - 1;
 
         if (!strcmp(argv[i], "-h")) {
-            usage();
-            exit(1);
+            usage(0);
         } else if (!strcmp(argv[i], "--help")) {
-            usage();
-            exit(1);
+            usage(0);
         } else if (!strcmp(argv[i], "--init")) {
-            cliInit();
+            exit(cliInit());
         } else if (argv[i][0] != '-') {
             commandpos = i;
         } else if (argv[i][0] == '-' && i < commandpos) {
-            fprintf(stderr, "Unknown flag/option: '%s'\n", argv[i]);
+            LOGE("Unknown flag/option: '%s'\n", argv[i]);
             exit(1);
         }
     }
+    return 0;
 }
 
-void cleanup()
+static void cleanup()
 {
     destroyConfig();
 }
@@ -157,21 +165,15 @@ int main(int argc, char *argv[])
 
     initConfig();
     atexit(cleanup); // might not be a good idea
+    loadConfig();
 
     parseOptions(argc, argv);
 
-    char *projfile = Shakefile_find_projfile();
-    if (projfile == NULL) {
-        usage();
-        print_no_project();
-        exit(1);
+    if (config.proj_file == NULL) {
+        noproject();
     }
 
-    loadConfig(projfile);
-    free(projfile);
-
     if (argc == 1) {
-        usage();
         printCommands();
         exit(0);
     }
@@ -179,7 +181,7 @@ int main(int argc, char *argv[])
     char *script_name = argv[1];
     rc = run_script(script_name, argc, &argv[1]);
     if (rc != 0) {
-        fprintf(stderr, "Unknown script/fn: '%s'\n", script_name);
+        LOGE("Unknown script/fn: '%s'\n", script_name);
         exit(1);
     }
 

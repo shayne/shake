@@ -2,23 +2,25 @@
 <module type="CPP_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src/config.c" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/main.c" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/cli.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/colors.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/runscripts/runscripts.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/runscripts/runscripts.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/shakefile/descriptions.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/shakefile/functions.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/shakefile/project.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/shakefile/shakefile.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/runner.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/log.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/cli.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/config.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/cli.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/config.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/commands.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/commands.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/colors.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/runner.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/dbg.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/commands.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/runscripts/runscripts.c" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/runscripts/runscripts.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/config.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/commands.c" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/cli.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/runner.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/util.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/vendor" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
     </content>
