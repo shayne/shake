@@ -5,6 +5,7 @@
 
 #include "dbg.h"
 
+#include "cli.h"
 #include "colors.h"
 #include "commands.h"
 #include "config.h"
@@ -134,6 +135,8 @@ void parseOptions(int argc, char **argv)
         } else if (!strcmp(argv[i], "--help")) {
             usage();
             exit(1);
+        } else if (!strcmp(argv[i], "--init")) {
+            cliInit();
         } else if (argv[i][0] != '-') {
             commandpos = i;
         } else if (argv[i][0] == '-' && i < commandpos) {
@@ -153,6 +156,9 @@ int main(int argc, char *argv[])
     int rc;
 
     initConfig();
+    atexit(cleanup); // might not be a good idea
+
+    parseOptions(argc, argv);
 
     char *projfile = Shakefile_find_projfile();
     if (projfile == NULL) {
@@ -162,7 +168,6 @@ int main(int argc, char *argv[])
     }
 
     loadConfig(projfile);
-    atexit(cleanup); // might not be a good idea
     free(projfile);
 
     if (argc == 1) {
@@ -170,8 +175,6 @@ int main(int argc, char *argv[])
         printCommands();
         exit(0);
     }
-
-    parseOptions(argc, argv);
 
     char *script_name = argv[1];
     rc = run_script(script_name, argc, &argv[1]);
