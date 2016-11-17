@@ -132,6 +132,7 @@ static void noproject()
 
 static int parseOptions(int argc, char **argv)
 {
+    int rc;
     int i;
     int commandpos = -1;
 
@@ -143,7 +144,12 @@ static int parseOptions(int argc, char **argv)
         } else if (!strcmp(argv[i], "--help")) {
             usage(0);
         } else if (!strcmp(argv[i], "--init")) {
-            exit(cliInit());
+            rc = cliInit();
+            if (rc != 0) {
+                exit(1);
+            }
+            printCommands();
+            exit(0);
         } else if (argv[i][0] != '-') {
             commandpos = i;
         } else if (argv[i][0] == '-' && i < commandpos) {

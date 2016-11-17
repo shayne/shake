@@ -17,7 +17,7 @@
 #include "log.h"
 #include "util.h"
 
-char getch() {
+static char getch() {
     char buf = 0;
     struct termios old = {0};
     if (tcgetattr(0, &old) < 0)
@@ -37,7 +37,7 @@ char getch() {
     return (buf);
 }
 
-char *readWithPreset(char *prompt, char *preset)
+static char *readWithPreset(char *prompt, char *preset)
 {
     char ch;
     char *out = NULL;
@@ -70,7 +70,7 @@ char *readWithPreset(char *prompt, char *preset)
 }
 
 
-void cliInitGetConfig(void)
+static void cliInitGetConfig(void)
 {
     int rc;
     char *projectDir;
@@ -169,6 +169,7 @@ void cliInitGetConfig(void)
         config.proj_dir_s = config.proj_dir = strdup(projectDir); // FIXME: lame
         config.cmd_dir = strdup(commandDir);
         config.cmd_prefix = strdup(commandPrefix);
+        asprintf(&config.proj_file, "%s/%s", config.proj_dir, SHAKEFILE_NAME);
     }
     free(yesOrNo);
 
@@ -193,6 +194,122 @@ error:
     if (commandPrefix)
         free(commandPrefix);
     fprintf(stderr, COLOR_ERROR("[ERROR]") " Failed init");
+}
+
+static void cliInitWriteConfig(void)
+{
+    int rc;
+    FILE *fp = NULL;
+
+    // write Shakefile
+    fp = fopen(config.proj_file, "w+");
+    if (fp == NULL) {
+        LOGE("Failed to open project file for writing: %s", config.proj_file);
+        return;
+    }
+    fprintf(fp, "%s=\"%s\"\n", COMMANDS_DIR, config.cmd_dir);
+    fprintf(fp, "%s=\"%s\"\n", COMMANDS_PREFIX, config.cmd_prefix);
+    fprintf(fp, "\n\n");
+    fprintf(fp, "function cmd-example-func()\n"
+            "{\n"
+            "    : shake example function, run \"shake example-func\" to execute it\n"
+            "    echo \"Welcome to shake!\"\n"
+            "    echo\n"
+            "    # Shake allows you to pass arguments to script-commands.\n"
+            "    # This allows you to easily add flags or options to your script-commands,\n"
+            "    # or pass them to another program you use to run.\n"
+            "    if (( $# == 0 )); then\n"
+            "        echo \"Try passing an argument:\"\n"
+            "        echo \"  $ shake example-script hello\"\n"
+            "    else\n"
+            "        echo \"First argument: \\\"$1\\\"\"\n"
+            "    fi\n"
+            "    if (( $# == 1 )); then\n"
+            "        echo\n"
+            "        echo \"You can pass as many arguments (or flags) as you'd like.\"\n"
+            "        echo \"Try this:\"\n"
+            "        echo \"  $ shake example-script hello --foo\"\n"
+            "    elif (( $# > 1 )); then\n"
+            "        echo \"Second argument: \\\"$2\\\"\"\n"
+            "        echo \"All arguments: $*\"\n"
+            "        echo\n"
+            "        echo \"To edit this command-script, and for more information, run:\"\n"
+            "        echo '  $ shake --edit example-script'\n"
+            "        echo\n"
+            "        echo \"You can remove this command-script by running:\"\n"
+            "        echo \"  $ shake --delete example-script\"\n"
+            "        echo\n"
+            "        echo \"To create your own command-script, run:\"\n"
+            "        echo \"  $ shake --create my-command\"\n"
+            "    fi\n"
+            "    echo\n"
+            "}\n");
+    fclose(fp);
+
+    // make cmd dir
+    char *cmdDirPath = NULL;
+    asprintf(&cmdDirPath, "%s/%s", config.proj_dir, config.cmd_dir);
+    check(cmdDirPath != NULL, "asprintf failed");
+
+    rc = mkdir(cmdDirPath, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+    check(rc == 0, "mkdir failed");
+
+    // write example script
+    char *scriptPath;
+    asprintf(&scriptPath, "%s/%sexample-script", cmdDirPath, config.cmd_prefix);
+    if (scriptPath == NULL) {
+        LOGE("Failed to create path for example command");
+        return;
+    }
+    fp = fopen(scriptPath, "w+");
+    check(fp != NULL, "fopen failed");
+    fprintf(fp, "#!/bin/bash\n"
+            "# ^ This line is called the shebang, it points to a executable.\n"
+            "# When a command is executed it's processed by the shebang executable.\n"
+            "# Here are a few example:\n"
+            "# nodejs: #!/usr/bin/env node\n"
+            "# python: #!/usr/bin/env python\n"
+            "# custom: #!/path/to/my/executable\n"
+            "# DESC: shake example command, run \"shake example-script\" to execute it\n"
+            "echo\n"
+            "echo \"Welcome to shake!\"\n"
+            "echo\n"
+            "# Shake allows you to pass arguments to script-commands.\n"
+            "# This allows you to easily add flags or options to your script-commands,\n"
+            "# or pass them to another program you use to run.\n"
+            "if (( $# == 0 )); then\n"
+            "    echo \"Try passing an argument:\"\n"
+            "    echo \"  $ shake example-script hello\"\n"
+            "else\n"
+            "    echo \"First argument: \\\"$1\\\"\"\n"
+            "fi\n"
+            "if (( $# == 1 )); then\n"
+            "    echo\n"
+            "    echo \"You can pass as many arguments (or flags) as you'd like.\"\n"
+            "    echo \"Try this:\"\n"
+            "    echo \"  $ shake example-script hello --foo\"\n"
+            "elif (( $# > 1 )); then\n"
+            "    echo \"Second argument: \\\"$2\\\"\"\n"
+            "    echo \"All arguments: $*\"\n"
+            "    echo\n"
+            "    echo \"To edit this command-script, and for more information, run:\"\n"
+            "    echo '  $ shake --edit example-script'\n"
+            "    echo\n"
+            "    echo \"You can remove this command-script by running:\"\n"
+            "    echo \"  $ shake --delete example-script\"\n"
+            "    echo\n"
+            "    echo \"To create your own command-script, run:\"\n"
+            "    echo \"  $ shake --create my-command\"\n"
+            "fi\n"
+            "echo\n");
+    fclose(fp);
+
+    rc = chmod(scriptPath, S_IRWXU | S_IRWXG | S_IXOTH | S_IROTH);
+    check(rc == 0, "chmod failed");
+
+    free(scriptPath);
+error:
+    return;
 }
 
 int cliInit(void)
@@ -226,6 +343,7 @@ int cliInit(void)
     printf("\n");
 
     cliInitGetConfig();
+    cliInitWriteConfig();
 
     return 0;
 

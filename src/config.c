@@ -59,7 +59,7 @@ void loadConfig()
         struct bstrList *args;
         args = bsplit(line, '=');
 
-        if (biseqcstrcaseless(args->entry[0], "scripts_prefix") &&
+        if (biseqcstrcaseless(args->entry[0], COMMANDS_PREFIX) &&
             args->qty == 2) {
             bstring prefix;
             prefix = args->entry[1];
@@ -72,7 +72,7 @@ void loadConfig()
             if (prefix != args->entry[1]) {
                 bdestroy(prefix);
             }
-        } else if (biseqcstrcaseless(args->entry[0], "scripts_dir") &&
+        } else if (biseqcstrcaseless(args->entry[0], COMMANDS_DIR) &&
                    args->qty == 2) {
             bstring dir;
             dir = args->entry[1];

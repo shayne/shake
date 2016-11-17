@@ -6,6 +6,9 @@
 #define SHAKE_CONFIG_H
 
 #define SHAKEFILE_NAME "Shakefile"
+#define COMMANDS_DIR "COMMANDS_DIR"
+#define COMMANDS_PREFIX "COMMAND_PREFIX"
+
 #define DEFAULT_CMD_DIR "scripts"
 #define DEFAULT_CMD_PREFIX "cmd-"
 
