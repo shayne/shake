@@ -58,6 +58,7 @@ int Shakefile_detect_descriptions(size_t size, char **descs)
 
         // increment our index on every fn
         int idx = i++;
+        check(size >= idx, "idx exceeds size");
 
         // skip curly brace line
         bdestroy(bgets((bNgetc)fgetc, stdout, '\n'));
