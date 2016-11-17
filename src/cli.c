@@ -115,7 +115,8 @@ static void cliInitGetConfig(void)
     printf("\n");
 
     char *prompt;
-    asprintf(&prompt, ANSI_BOLD("commands dir:") " %s/", projectDir);
+    rc = asprintf(&prompt, ANSI_BOLD("commands dir:") " %s/", projectDir);
+    check(rc > 0, "asprintf failed");
 
     while (1) {
         commandDir = readWithPreset(prompt, DEFAULT_CMD_DIR);
@@ -169,7 +170,8 @@ static void cliInitGetConfig(void)
         config.proj_dir_s = config.proj_dir = strdup(projectDir); // FIXME: lame
         config.cmd_dir = strdup(commandDir);
         config.cmd_prefix = strdup(commandPrefix);
-        asprintf(&config.proj_file, "%s/%s", config.proj_dir, SHAKEFILE_NAME);
+        rc = asprintf(&config.proj_file, "%s/%s", config.proj_dir, SHAKEFILE_NAME);
+        check(rc > 0, "asprintf failed");
     }
     free(yesOrNo);
 
@@ -248,15 +250,17 @@ static void cliInitWriteConfig(void)
 
     // make cmd dir
     char *cmdDirPath = NULL;
-    asprintf(&cmdDirPath, "%s/%s", config.proj_dir, config.cmd_dir);
-    check(cmdDirPath != NULL, "asprintf failed");
+    rc = asprintf(&cmdDirPath, "%s/%s", config.proj_dir, config.cmd_dir);
+    check(rc > 0, "asprintf failed");
 
     rc = mkdir(cmdDirPath, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
     check(rc == 0, "mkdir failed");
 
     // write example script
     char *scriptPath;
-    asprintf(&scriptPath, "%s/%sexample-script", cmdDirPath, config.cmd_prefix);
+    rc = asprintf(&scriptPath, "%s/%sexample-script", cmdDirPath, config.cmd_prefix);
+    check(rc > 0, "asprintf failed");
+
     if (scriptPath == NULL) {
         LOGE("Failed to create path for example command");
         return;
@@ -314,13 +318,14 @@ error:
 
 int cliInit(void)
 {
+    int rc;
     if (config.proj_file) {
         char cwd[PATH_MAX];
         check(getcwd(cwd, PATH_MAX) != NULL, "getcwd failed");
 
         autofree(char) *path = NULL;
-        asprintf(&path, "%s/%s", cwd, SHAKEFILE_NAME);
-        check_mem(path);
+        rc = asprintf(&path, "%s/%s", cwd, SHAKEFILE_NAME);
+        check(rc > 0, "asprintf failed");
 
         if (access(path, F_OK) == 0) {
             LOGE("Failed to init");
