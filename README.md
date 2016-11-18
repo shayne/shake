@@ -12,17 +12,17 @@ Shake reads from a ``Shakefile`` which can contain any scripting you'd like to h
 
 # Installing
 
-Getting started is easy. You can download the latest version from our [Release](https://github.com/shayne/shake/releases) page, or use one of the following automated methods:
+Getting started is easy. You can download the latest version from our [Releases](https://github.com/shayne/shake/releases) page, or use one of the following automated methods:
 
 **curl**
 
-```
+```bash
 $ curl https://shakeit.co | sh
 ```
 
 **homebrew**
 
-```
+```bash
 $ brew install shayne/shake/shake
 ```
 
@@ -30,7 +30,7 @@ $ brew install shayne/shake/shake
 
 Shake can create a Shakefile for you, providing a bit of a tutorial and generating a couple examples at the same time.
 
-```
+```bash
 $ cd /path/to/my-project
 $ shake --init
 
