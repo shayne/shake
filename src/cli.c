@@ -10,12 +10,14 @@
 #include <bstrlib.h>
 #include <sys/stat.h>
 #include <limits.h> // CLion says not needed?
+#include <glob.h>
 #include "cli.h"
 #include "colors.h"
 #include "dbg.h"
 #include "config.h"
 #include "log.h"
 #include "util.h"
+#include "shakefile/shakefile.h"
 
 static char getch() {
     char buf = 0;
@@ -354,4 +356,70 @@ int cliInit(void)
 
 error:
     return -1;
+}
+
+int cliEdit(char *cmd) {
+    int i;
+    int rc;
+    char *editor = getenv("EDITOR");
+
+    if (editor == NULL) {
+        LOGE("EDITOR environment variable not set. Trying nano and vim...");
+        if (access("/usr/bin/nano", X_OK) == 0) {
+            editor = "/usr/bin/nano";
+        } else if (access("/usr/bin/vim", X_OK) == 0) {
+            editor = "/usr/bin/vim";
+        } else {
+            LOGE("Unable to find default editor. Please set the EDITOR environment variable.");
+            goto error;
+        }
+    }
+
+    rc = Shakefile_has_fn(cmd);
+    if (rc == 1 /* true */) {
+        autofree(char) *editorcmd;
+        rc = asprintf(&editorcmd, "%s %s/%s", editor, config.proj_dir, SHAKEFILE_NAME);
+        check(rc > 0, "asprintf failed");
+        rc = system(editorcmd);
+        if (rc != 0) {
+            LOGE("Failed to edit using command: %s", editorcmd);
+        }
+        goto end;
+    }
+
+    glob_t globbuf;
+
+    autofree(char) *pat;
+    rc = asprintf(&pat, "%s/%s/%s%s*", config.proj_dir, config.cmd_dir, config.cmd_prefix, cmd);
+    check(rc > 0, "asprintf failed");
+    glob(pat, 0, NULL, &globbuf);
+
+    if (globbuf.gl_pathc == 0) {
+        LOGE("Unable to find command: '%s'", cmd);
+        LOG("To create, run: $ shake --create %s", cmd);
+        rc = -1;
+        goto end;
+    } else if (globbuf.gl_pathc == 1) {
+        autofree(char) *editorcmd;
+        rc = asprintf(&editorcmd, "%s %s", editor, globbuf.gl_pathv[0]);
+        check(rc > 0, "asprintf failed");
+        rc = system(editorcmd);
+        if (rc != 0) {
+            LOGE("Failed to edit using command: %s", editorcmd);
+        }
+    } else {
+        LOGW("Multiple command scripts found:");
+        for (i = 0; i < globbuf.gl_pathc; i++) {
+            LOG("  %s", globbuf.gl_pathv[i]);
+        }
+        goto end;
+    }
+
+end:
+    globfree(&globbuf);
+    return rc;
+
+error:
+    rc = -1;
+    goto end;
 }

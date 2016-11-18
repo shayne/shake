@@ -6,5 +6,6 @@
 #define SHAKE_CLI_H
 
 int cliInit(void);
+int cliEdit(char *cmd);
 
 #endif // SHAKE_CLI_H

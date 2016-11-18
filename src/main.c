@@ -26,8 +26,9 @@ static void printUsage()
                     "  shake " ANSI_PINK("[OPTIONS] ") ANSI_GREEN("[COMMAND] ") ANSI_GRAY("[COMMAND-ARGS]") "\n"
                     "\n"
                     ANSI_BOLD("Options") "\n"
-                    "  " ANSI_PINK("--init") "\tInitialize a new shake project\n"
-                    "  " ANSI_PINK("-h, --help") "\tPrint this help text and exit\n"
+                    "  " ANSI_PINK("--init") "            Initialize a new shake project\n"
+                    "  " ANSI_PINK("-h, --help") "        Print this help text and exit\n"
+                    "  " ANSI_PINK("--edit ") ANSI_GREEN("[COMMAND]") "  Edit the Shakefile or command script\n"
                     "\n",
             version);
 }
@@ -150,6 +151,8 @@ static int parseOptions(int argc, char **argv)
             }
             printCommands();
             exit(0);
+        } else if (!strcmp(argv[i], "--edit") && !lastarg) {
+            exit(cliEdit(argv[++i]));
         } else if (argv[i][0] != '-') {
             commandpos = i;
         } else if (argv[i][0] == '-' && i < commandpos) {

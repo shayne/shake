@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPTS_PREFIX="run-"
+COMMAND_PREFIX="run-"
 
 function run-foo()
 {

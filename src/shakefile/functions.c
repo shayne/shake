@@ -66,7 +66,7 @@ error:
     return -1;
 }
 
-int Shakefile_has_fn(char *name)
+int Shakefile_has_fn(char *name) // TODO: change 0 ret as success
 {
     int i;
     int rb = 0; // 0 for false
