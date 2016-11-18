@@ -8,6 +8,8 @@ What I wanted was to make make behave like bash, allowing me to do everything I 
 
 Shake reads from a ``Shakefile`` which can contain any scripting you'd like to help automate your tasks. Tasks can be defined within the Shakefile itself, as Bash functions, or as standalone scripts, written in whatever language works for you.
 
+![shake](https://cloud.githubusercontent.com/assets/79330/20418285/00c21d02-ad01-11e6-9820-4df70f8fabbf.png)
+
 # Installing
 
 Getting started is easy. You can download the latest version from our [Release](https://github.com/shayne/shake/releases) page, or use one of the following automated methods:
