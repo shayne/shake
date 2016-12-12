@@ -9,15 +9,14 @@
 #include "colors.h"
 #include "commands.h"
 #include "config.h"
+#include "log.h"
 #include "runner.h"
 #include "runscripts/runscripts.h"
 #include "shakefile/shakefile.h"
-#include "log.h"
 
 struct shakeConfig config;
 
-static void printUsage()
-{
+static void printUsage(void) {
     char *version = "0.0.0";
     fprintf(stderr,
             "\n"
@@ -33,14 +32,13 @@ static void printUsage()
             version);
 }
 
-static void printCommands()
-{
+static void printCommands(void) {
     int i;
     int rc;
     char **cmds;
     char **descs;
     char *fmt = NULL;
-    int cmdcount = 0;
+    ssize_t cmdcount = 0;
 
     printUsage();
 
@@ -55,13 +53,14 @@ static void printCommands()
         }
     }
 
-    printf(ANSI_BOLD("Commands") "\n\n");
+    if (cmdcount > 0) {
+        printf(ANSI_BOLD("Commands") "\n\n");
+    }
 
     for (i = 0; i < cmdcount; i++) {
         char *cmd = cmds[i];
         char *desc = descs[i];
-        rc = asprintf(&fmt,
-                      "  " ANSI_GREEN("%%s") "%%%lus%%s\n",
+        rc = asprintf(&fmt, "  " ANSI_GREEN("%%s") "%%%lus%%s\n",
                       padding + 2 - strlen(cmd));
         check(rc > 0, "asprintf failed");
         check(fmt != NULL, "asprintf failed");
@@ -72,24 +71,20 @@ static void printCommands()
 
     printf("\n");
 
-error: // fallthrough
+error:  // fallthrough
     if (cmds) {
-        for (i = 0; i < cmdcount; i++)
-            free(cmds[i]);
+        for (i = 0; i < cmdcount; i++) free(cmds[i]);
         free(cmds);
     }
     if (descs) {
         for (i = 0; i < cmdcount; i++)
-            if (descs[i])
-                free(descs[i]);
+            if (descs[i]) free(descs[i]);
         free(descs);
     }
-    if (fmt)
-        free(fmt);
+    if (fmt) free(fmt);
 }
 
-static int run_script(char *cmd_name, int argc, char *argv[])
-{
+static int run_script(char *cmd_name, int argc, char *argv[]) {
     int rc;
     char *runscript = NULL;
 
@@ -114,25 +109,22 @@ error:
     return rc;
 }
 
-static void usage(int rc)
-{
+static void usage(int rc) {
     printUsage();
     exit(rc);
 }
 
-static void noproject()
-{
+static void noproject(void) {
     fprintf(stderr,
             "It appears this directory, or its parent directories, "
-                    "have not been setup to run shake.\n");
+            "have not been setup to run shake.\n");
     fprintf(stderr,
             "To start using shake run:\n"
-                    "  $ shake --init\n\n");
+            "  $ shake --init\n\n");
     usage(1);
 }
 
-static int parseOptions(int argc, char **argv)
-{
+static int parseOptions(int argc, char **argv) {
     int rc;
     int i;
     int commandpos = -1;
@@ -163,17 +155,13 @@ static int parseOptions(int argc, char **argv)
     return 0;
 }
 
-static void cleanup()
-{
-    destroyConfig();
-}
+static void cleanup(void) { destroyConfig(); }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     int rc;
 
     initConfig();
-    atexit(cleanup); // might not be a good idea
+    atexit(cleanup);  // might not be a good idea
     loadConfig();
 
     parseOptions(argc, argv);

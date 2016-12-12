@@ -2,45 +2,40 @@
 // Created by shayne on 11/16/16.
 //
 
+#include "cli.h"
+#include <bstrlib.h>
+#include <ctype.h>
+#include <glob.h>
+#include <limits.h>  // CLion says not needed?
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <termios.h>
-#include <ctype.h>
-#include <bstrlib.h>
 #include <sys/stat.h>
-#include <limits.h> // CLion says not needed?
-#include <glob.h>
-#include "cli.h"
+#include <termios.h>
+#include <unistd.h>
 #include "colors.h"
-#include "dbg.h"
 #include "config.h"
+#include "dbg.h"
 #include "log.h"
-#include "util.h"
 #include "shakefile/shakefile.h"
+#include "util.h"
 
-static char getch() {
+static char getch(void) {
     char buf = 0;
     struct termios old = {0};
-    if (tcgetattr(0, &old) < 0)
-        perror("tcsetattr()");
-    old.c_lflag &= ~ICANON;
-    old.c_lflag &= ~ECHO;
+    if (tcgetattr(0, &old) < 0) perror("tcsetattr()");
+    old.c_lflag &= (unsigned int)~ICANON;
+    old.c_lflag &= (unsigned int)~ECHO;
     old.c_cc[VMIN] = 1;
     old.c_cc[VTIME] = 0;
-    if (tcsetattr(0, TCSANOW, &old) < 0)
-        perror("tcsetattr ICANON");
-    if (read(0, &buf, 1) < 0)
-        perror ("read()");
+    if (tcsetattr(0, TCSANOW, &old) < 0) perror("tcsetattr ICANON");
+    if (read(0, &buf, 1) < 0) perror("read()");
     old.c_lflag |= ICANON;
     old.c_lflag |= ECHO;
-    if (tcsetattr(0, TCSADRAIN, &old) < 0)
-        perror ("tcsetattr ~ICANON");
+    if (tcsetattr(0, TCSADRAIN, &old) < 0) perror("tcsetattr ~ICANON");
     return (buf);
 }
 
-static char *readWithPreset(char *prompt, char *preset)
-{
+static char *readWithPreset(char *prompt, char *preset) {
     char ch;
     char *out = NULL;
     bstring value = cstr2bstr(preset);
@@ -48,13 +43,13 @@ static char *readWithPreset(char *prompt, char *preset)
     fflush(stdout);
     while ((ch = getch()) != 0) {
         switch (ch) {
-            case '\177': // backspace
+            case '\177':  // backspace
                 if (value->slen > 0) {
                     bdelete(value, value->slen - 1, 1);
                     printf("\b \b");
                 }
                 break;
-            case '\n': // enter
+            case '\n':  // enter
                 printf("\n");
                 goto end;
             default:
@@ -65,26 +60,25 @@ static char *readWithPreset(char *prompt, char *preset)
         }
         fflush(stdout);
     }
-    end:
+end:
     out = bstr2cstr(value, '\0');
     bdestroy(value);
     return out;
 }
 
-
-static void cliInitGetConfig(void)
-{
+static void cliInitGetConfig(void) {
     int rc;
-    char *projectDir;
-    char *commandDir;
-    char *commandPrefix;
+    char *projectDir = NULL;
+    char *commandDir = NULL;
+    char *commandPrefix = NULL;
 
     // projectDir
     printf(ANSI_BOLD("#1) Choose a project root\n"));
     printf("    This directory will the top-most directory in your project\n");
     printf("    that will recognize your shake commands.\n");
     printf("\n");
-    printf(ANSI_GREEN("TIP:") " You can run shake from any sub-directory of your project");
+    printf(ANSI_GREEN(
+        "TIP:") " You can run shake from any sub-directory of your project");
     printf("\n");
 
     char cwd[PATH_MAX];
@@ -99,7 +93,10 @@ static void cliInitGetConfig(void)
         }
         rc = stat(projectDir, &projectDirStat);
         if (rc == 0 && S_ISDIR(projectDirStat.st_mode) != 1) {
-            fprintf(stderr, COLOR_ERROR("[ERROR]") " Project root '%s' is not a directory\n", projectDir);
+            fprintf(stderr,
+                    COLOR_ERROR(
+                        "[ERROR]") " Project root '%s' is not a directory\n",
+                    projectDir);
             continue;
         }
         break;
@@ -111,9 +108,14 @@ static void cliInitGetConfig(void)
     printf("    This directory can be a new or existing one.\n");
     printf("    It will be used by shake to locate command-scripts.\n");
     printf("\n");
-    printf(ANSI_GREEN("TIP:") " Command-scripts are normal scripts that can be executed directly.\n");
-    printf("     It's common to choose a directory you already have and have command\n");
-    printf("     scripts wrap existing sets of scripts or use common helpers.\n");
+    printf(ANSI_GREEN(
+        "TIP:") " Command-scripts are normal scripts that can be executed "
+                "directly.\n");
+    printf(
+        "     It's common to choose a directory you already have and have "
+        "command\n");
+    printf(
+        "     scripts wrap existing sets of scripts or use common helpers.\n");
     printf("\n");
 
     char *prompt;
@@ -121,9 +123,12 @@ static void cliInitGetConfig(void)
     check(rc > 0, "asprintf failed");
 
     while (1) {
-        commandDir = readWithPreset(prompt, DEFAULT_CMD_DIR);
+        commandDir = readWithPreset(prompt, (char *)DEFAULT_CMD_DIR);
         if (strcmp(commandDir, "/") == 0 || strcmp(commandDir, "..") == 0) {
-            fprintf(stderr, COLOR_ERROR("[ERROR]") " Must provide the name of a sub-directory\n");
+            fprintf(
+                stderr,
+                COLOR_ERROR(
+                    "[ERROR]") " Must provide the name of a sub-directory\n");
             continue;
         }
         printf("\n");
@@ -134,21 +139,31 @@ static void cliInitGetConfig(void)
 
     // commandPrefix
     printf(ANSI_BOLD("#3) Specify a command-script prefix\n"));
-    printf("    This prefix is used by shake to separate command-scripts from other files in the\n");
-    printf("    command-scripts directory. The prefix is not part of the name of the command.\n");
-    printf("    It's recommended to end the prefix with a \"-\", for example:\n");
+    printf(
+        "    This prefix is used by shake to separate command-scripts from "
+        "other files in the\n");
+    printf(
+        "    command-scripts directory. The prefix is not part of the name of "
+        "the command.\n");
+    printf(
+        "    It's recommended to end the prefix with a \"-\", for example:\n");
     printf("      $ shake start-server # command-script: cmd-start-server\n");
     printf("      $ shake run-tests    # command-script: cmd-run-tests\n");
     printf("\n");
-    printf(ANSI_GREEN("TIP:") " You can edit existing or create new command-scripts by running:\n");
+    printf(ANSI_GREEN(
+        "TIP:") " You can edit existing or create new command-scripts by "
+                "running:\n");
     printf("       $ shake --edit my-existing-command\n");
     printf("       $ shake --create some-new-command\n");
     printf("\n");
 
     while (1) {
-        commandPrefix = readWithPreset(ANSI_BOLD("command prefix: "), DEFAULT_CMD_PREFIX);
+        commandPrefix = readWithPreset(ANSI_BOLD("command prefix: "),
+                                       (char *)DEFAULT_CMD_PREFIX);
         if (strlen(commandPrefix) == 0) {
-            fprintf(stderr, COLOR_ERROR("[ERROR]") " Must specify a prefix for commands\n");
+            fprintf(
+                stderr,
+                COLOR_ERROR("[ERROR]") " Must specify a prefix for commands\n");
             continue;
         }
         printf("\n");
@@ -159,9 +174,9 @@ static void cliInitGetConfig(void)
     printf("\n");
     printf("Confirm configuration:\n");
     printf("\n");
-    printf("#1) "ANSI_BOLD("root dir      ") " = %s\n", projectDir);
-    printf("#2) "ANSI_BOLD("commands dir  ") " = %s\n", commandDir);
-    printf("#3) "ANSI_BOLD("command prefix") " = %s\n", commandPrefix);
+    printf("#1) " ANSI_BOLD("root dir      ") " = %s\n", projectDir);
+    printf("#2) " ANSI_BOLD("commands dir  ") " = %s\n", commandDir);
+    printf("#3) " ANSI_BOLD("command prefix") " = %s\n", commandPrefix);
     printf("\n");
 
     int restart = 0;
@@ -169,20 +184,19 @@ static void cliInitGetConfig(void)
     if (strlen(yesOrNo) > 0 && tolower(yesOrNo[0]) == 'n') {
         restart = 1;
     } else {
-        config.proj_dir_s = config.proj_dir = strdup(projectDir); // FIXME: lame
+        config.proj_dir_s = config.proj_dir =
+            strdup(projectDir);  // FIXME: lame
         config.cmd_dir = strdup(commandDir);
         config.cmd_prefix = strdup(commandPrefix);
-        rc = asprintf(&config.proj_file, "%s/%s", config.proj_dir, SHAKEFILE_NAME);
+        rc = asprintf(&config.proj_file, "%s/%s", config.proj_dir,
+                      SHAKEFILE_NAME);
         check(rc > 0, "asprintf failed");
     }
     free(yesOrNo);
 
-    if (projectDir)
-        free(projectDir);
-    if (commandDir)
-        free(commandDir);
-    if (commandPrefix)
-        free(commandPrefix);
+    if (projectDir) free(projectDir);
+    if (commandDir) free(commandDir);
+    if (commandPrefix) free(commandPrefix);
 
     if (restart) {
         cliInitGetConfig();
@@ -191,17 +205,13 @@ static void cliInitGetConfig(void)
     return;
 
 error:
-    if (projectDir)
-        free(projectDir);
-    if (commandDir)
-        free(commandDir);
-    if (commandPrefix)
-        free(commandPrefix);
+    if (projectDir) free(projectDir);
+    if (commandDir) free(commandDir);
+    if (commandPrefix) free(commandPrefix);
     fprintf(stderr, COLOR_ERROR("[ERROR]") " Failed init");
 }
 
-static void cliInitWriteConfig(void)
-{
+static void cliInitWriteConfig(void) {
     int rc;
     FILE *fp = NULL;
 
@@ -214,13 +224,16 @@ static void cliInitWriteConfig(void)
     fprintf(fp, "%s=\"%s\"\n", COMMANDS_DIR, config.cmd_dir);
     fprintf(fp, "%s=\"%s\"\n", COMMANDS_PREFIX, config.cmd_prefix);
     fprintf(fp, "\n\n");
-    fprintf(fp, "function cmd-example-func()\n"
+    fprintf(fp,
+            "function cmd-example-func()\n"
             "{\n"
-            "    : shake example function, run \"shake example-func\" to execute it\n"
+            "    : shake example function, run \"shake example-func\" to "
+            "execute it\n"
             "    echo \"Welcome to shake!\"\n"
             "    echo\n"
             "    # Shake allows you to pass arguments to script-commands.\n"
-            "    # This allows you to easily add flags or options to your script-commands,\n"
+            "    # This allows you to easily add flags or options to your "
+            "script-commands,\n"
             "    # or pass them to another program you use to run.\n"
             "    if (( $# == 0 )); then\n"
             "        echo \"Try passing an argument:\"\n"
@@ -230,14 +243,16 @@ static void cliInitWriteConfig(void)
             "    fi\n"
             "    if (( $# == 1 )); then\n"
             "        echo\n"
-            "        echo \"You can pass as many arguments (or flags) as you'd like.\"\n"
+            "        echo \"You can pass as many arguments (or flags) as you'd "
+            "like.\"\n"
             "        echo \"Try this:\"\n"
             "        echo \"  $ shake example-func hello --foo\"\n"
             "    elif (( $# > 1 )); then\n"
             "        echo \"Second argument: \\\"$2\\\"\"\n"
             "        echo \"All arguments: $*\"\n"
             "        echo\n"
-            "        echo \"To edit this command-script, and for more information, run:\"\n"
+            "        echo \"To edit this command-script, and for more "
+            "information, run:\"\n"
             "        echo '  $ shake --edit example-func'\n"
             "        echo\n"
             "        echo \"You can remove this command-script by running:\"\n"
@@ -260,7 +275,8 @@ static void cliInitWriteConfig(void)
 
     // write example script
     char *scriptPath;
-    rc = asprintf(&scriptPath, "%s/%sexample-script", cmdDirPath, config.cmd_prefix);
+    rc = asprintf(&scriptPath, "%s/%sexample-script", cmdDirPath,
+                  config.cmd_prefix);
     check(rc > 0, "asprintf failed");
 
     if (scriptPath == NULL) {
@@ -269,19 +285,23 @@ static void cliInitWriteConfig(void)
     }
     fp = fopen(scriptPath, "w+");
     check(fp != NULL, "fopen failed");
-    fprintf(fp, "#!/bin/bash\n"
+    fprintf(fp,
+            "#!/bin/bash\n"
             "# ^ This line is called the shebang, it points to a executable.\n"
-            "# When a command is executed it's processed by the shebang executable.\n"
+            "# When a command is executed it's processed by the shebang "
+            "executable.\n"
             "# Here are a few example:\n"
             "# nodejs: #!/usr/bin/env node\n"
             "# python: #!/usr/bin/env python\n"
             "# custom: #!/path/to/my/executable\n"
-            "# DESC: shake example command, run \"shake example-script\" to execute it\n"
+            "# DESC: shake example command, run \"shake example-script\" to "
+            "execute it\n"
             "echo\n"
             "echo \"Welcome to shake!\"\n"
             "echo\n"
             "# Shake allows you to pass arguments to script-commands.\n"
-            "# This allows you to easily add flags or options to your script-commands,\n"
+            "# This allows you to easily add flags or options to your "
+            "script-commands,\n"
             "# or pass them to another program you use to run.\n"
             "if (( $# == 0 )); then\n"
             "    echo \"Try passing an argument:\"\n"
@@ -291,14 +311,16 @@ static void cliInitWriteConfig(void)
             "fi\n"
             "if (( $# == 1 )); then\n"
             "    echo\n"
-            "    echo \"You can pass as many arguments (or flags) as you'd like.\"\n"
+            "    echo \"You can pass as many arguments (or flags) as you'd "
+            "like.\"\n"
             "    echo \"Try this:\"\n"
             "    echo \"  $ shake example-script hello --foo\"\n"
             "elif (( $# > 1 )); then\n"
             "    echo \"Second argument: \\\"$2\\\"\"\n"
             "    echo \"All arguments: $*\"\n"
             "    echo\n"
-            "    echo \"To edit this command-script, and for more information, run:\"\n"
+            "    echo \"To edit this command-script, and for more information, "
+            "run:\"\n"
             "    echo '  $ shake --edit example-script'\n"
             "    echo\n"
             "    echo \"You can remove this command-script by running:\"\n"
@@ -318,8 +340,7 @@ error:
     return;
 }
 
-int cliInit(void)
-{
+int cliInit(void) {
     int rc;
     if (config.proj_file) {
         char cwd[PATH_MAX];
@@ -343,10 +364,15 @@ int cliInit(void)
     }
 
     printf("\n");
-    printf(ANSI_GRAY("This utility will walk you through the basic shake setup process.\n"));
-    printf(ANSI_GRAY("It only covers the required configuration, and suggests typical defaults.\n"));
+    printf(ANSI_GRAY(
+        "This utility will walk you through the basic shake setup process.\n"));
+    printf(
+        ANSI_GRAY("It only covers the required configuration, and suggests "
+                  "typical defaults.\n"));
     printf("\n");
-    printf(ANSI_GRAY("Press CTRL-C at any time to quit. No changes are made until you've finished.\n"));
+    printf(
+        ANSI_GRAY("Press CTRL-C at any time to quit. No changes are made until "
+                  "you've finished.\n"));
     printf("\n");
 
     cliInitGetConfig();
@@ -370,15 +396,18 @@ int cliEdit(char *cmd) {
         } else if (access("/usr/bin/vim", X_OK) == 0) {
             editor = "/usr/bin/vim";
         } else {
-            LOGE("Unable to find default editor. Please set the EDITOR environment variable.");
+            LOGE(
+                "Unable to find default editor. Please set the EDITOR "
+                "environment variable.");
             goto error;
         }
     }
 
     rc = Shakefile_has_fn(cmd);
     if (rc == 1 /* true */) {
-        autofree(char) *editorcmd;
-        rc = asprintf(&editorcmd, "%s %s/%s", editor, config.proj_dir, SHAKEFILE_NAME);
+        autofree(char) * editorcmd;
+        rc = asprintf(&editorcmd, "%s %s/%s", editor, config.proj_dir,
+                      SHAKEFILE_NAME);
         check(rc > 0, "asprintf failed");
         rc = system(editorcmd);
         if (rc != 0) {
@@ -389,8 +418,9 @@ int cliEdit(char *cmd) {
 
     glob_t globbuf;
 
-    autofree(char) *pat;
-    rc = asprintf(&pat, "%s/%s/%s%s*", config.proj_dir, config.cmd_dir, config.cmd_prefix, cmd);
+    autofree(char) * pat;
+    rc = asprintf(&pat, "%s/%s/%s%s*", config.proj_dir, config.cmd_dir,
+                  config.cmd_prefix, cmd);
     check(rc > 0, "asprintf failed");
     glob(pat, 0, NULL, &globbuf);
 
@@ -400,7 +430,7 @@ int cliEdit(char *cmd) {
         rc = -1;
         goto end;
     } else if (globbuf.gl_pathc == 1) {
-        autofree(char) *editorcmd;
+        autofree(char) * editorcmd;
         rc = asprintf(&editorcmd, "%s %s", editor, globbuf.gl_pathv[0]);
         check(rc > 0, "asprintf failed");
         rc = system(editorcmd);
@@ -409,7 +439,7 @@ int cliEdit(char *cmd) {
         }
     } else {
         LOGW("Multiple command scripts found:");
-        for (i = 0; i < globbuf.gl_pathc; i++) {
+        for (i = 0; (unsigned int)i < globbuf.gl_pathc; i++) {
             LOG("  %s", globbuf.gl_pathv[i]);
         }
         goto end;

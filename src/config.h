@@ -5,12 +5,12 @@
 #ifndef SHAKE_CONFIG_H
 #define SHAKE_CONFIG_H
 
-#define SHAKEFILE_NAME "Shakefile"
-#define COMMANDS_DIR "COMMANDS_DIR"
-#define COMMANDS_PREFIX "COMMAND_PREFIX"
+extern char const *SHAKEFILE_NAME;
+extern char const *COMMANDS_DIR;
+extern char const *COMMANDS_PREFIX;
 
-#define DEFAULT_CMD_DIR "scripts"
-#define DEFAULT_CMD_PREFIX "cmd-"
+extern char const *DEFAULT_CMD_DIR;
+extern char const *DEFAULT_CMD_PREFIX;
 
 struct shakeConfig {
     char *proj_file;
@@ -27,6 +27,6 @@ extern struct shakeConfig config;
 void initConfig(void);
 void destroyConfig(void);
 
-void loadConfig();
+void loadConfig(void);
 
-#endif // SHAKE_CONFIG_H
+#endif  // SHAKE_CONFIG_H

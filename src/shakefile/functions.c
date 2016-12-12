@@ -2,39 +2,29 @@
 // Created by shayne on 11/7/16.
 //
 
+#include <bstrlib.h>
+#include <stdlib.h>  // needed?
+#include <sys/wait.h>
+#include <unistd.h>
 #include "../config.h"
 #include "../dbg.h"
 #include "shakefile.h"
-#include <bstrlib.h>
-#include <stdlib.h> // needed?
-#include <sys/wait.h>
-#include <unistd.h>
 
-int Shakefile_detect_functions(size_t size, char *fns[])
-{
+int Shakefile_detect_functions(size_t size, char *fns[]) {
     pid_t pid;
     int pipes[2];
 
     check(pipe(pipes) == 0, "Failed to create pipes");
 
-    if ((pid = fork()) == -1)
-        sentinel("pipe failed on fork");
+    if ((pid = fork()) == -1) sentinel("pipe failed on fork");
 
     if (pid == 0) {
         while ((dup2(pipes[1], STDOUT_FILENO) == -1) && (errno == EINTR)) {
         }
         close(pipes[0]);
         close(pipes[1]);
-        execlp("bash",
-               "bash",
-               "-c",
-               "source $0 && $@",
-               config.proj_file,
-               "compgen",
-               "-A",
-               "function",
-               config.cmd_prefix,
-               NULL);
+        execlp("bash", "bash", "-c", "source $0 && $@", config.proj_file,
+               "compgen", "-A", "function", config.cmd_prefix, NULL);
         perror("execlp");
         _exit(1);
     }
@@ -52,7 +42,7 @@ int Shakefile_detect_functions(size_t size, char *fns[])
         check(fn != NULL, "bdata line was null.");
 
         fns[i++] = strdup(fn);
-        check(i < size, "too many functions");
+        check(i < (int)size, "too many functions");
 
         bdestroy(line);
     }
@@ -66,10 +56,10 @@ error:
     return -1;
 }
 
-int Shakefile_has_fn(char *name) // TODO: change 0 ret as success
+int Shakefile_has_fn(char *name)  // TODO: change 0 ret as success
 {
     int i;
-    int rb = 0; // 0 for false
+    int rb = 0;  // 0 for false
     int fncount = 0;
     char *fns[255];
 
@@ -82,8 +72,7 @@ int Shakefile_has_fn(char *name) // TODO: change 0 ret as success
         }
     }
 
-    for (i = 0; i < fncount; i++)
-        free(fns[i]);
+    for (i = 0; i < fncount; i++) free(fns[i]);
 
     return rb;
 }

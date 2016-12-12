@@ -10,8 +10,7 @@
 
 #define SHAKEFILE_NAME "Shakefile"
 
-int up_dir(char *root, char *out, size_t size)
-{
+int up_dir(char *root, char *out, size_t size) {
     int rc = 0;
     char pathmax[size];
 
@@ -28,8 +27,7 @@ error:
     return -1;
 }
 
-char *search_up(char *filename, char *startdir)
-{
+char *search_up(char *filename, char *startdir) {
     char cwd[PATH_MAX];
     char nextdir[PATH_MAX];
     char file_path[PATH_MAX];
@@ -47,8 +45,7 @@ char *search_up(char *filename, char *startdir)
     return NULL;
 }
 
-char *Shakefile_find_projfile(void)
-{
+char *Shakefile_find_projfile(void) {
     char *ret;
     char cwd[PATH_MAX];
 

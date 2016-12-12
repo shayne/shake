@@ -7,4 +7,4 @@
 
 int Runscripts_find_script(char *cmd_name, char **out);
 
-#endif // SHAKE_RUNSCRIPTS_H
+#endif  // SHAKE_RUNSCRIPTS_H

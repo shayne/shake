@@ -3,39 +3,38 @@
 //
 
 #include "config.h"
-#include "dbg.h"
-#include "shakefile/shakefile.h"
-#include "log.h"
-#include "util.h"
 #include <bstrlib.h>
 #include <libgen.h>
 #include <stdlib.h>
+#include "dbg.h"
+#include "log.h"
+#include "shakefile/shakefile.h"
+#include "util.h"
 
-void initConfig(void)
-{
+char const *SHAKEFILE_NAME = "Shakefile";
+char const *COMMANDS_DIR = "COMMANDS_DIR";
+char const *COMMANDS_PREFIX = "COMMAND_PREFIX";
+
+char const *DEFAULT_CMD_DIR = "scripts";
+char const *DEFAULT_CMD_PREFIX = "cmd-";
+
+void initConfig(void) {
     config.proj_file = NULL;
     config.proj_dir = NULL;
-    config.cmd_dir = DEFAULT_CMD_DIR;
+    config.cmd_dir = (char *)DEFAULT_CMD_DIR;
     config.cmd_dir_len = 7;
-    config.cmd_prefix = DEFAULT_CMD_PREFIX;
+    config.cmd_prefix = (char *)DEFAULT_CMD_PREFIX;
     config.cmd_prefix_len = 4;
 }
 
-void destroyConfig(void)
-{
-    if (config.proj_dir_s)
-        free(config.proj_dir_s);
-    if (config.proj_file)
-        free(config.proj_file);
-    if (config.cmd_dir != DEFAULT_CMD_DIR)
-        free(config.cmd_dir);
-    if (config.cmd_prefix != DEFAULT_CMD_PREFIX)
-        free(config.cmd_prefix);
+void destroyConfig(void) {
+    if (config.proj_dir_s) free(config.proj_dir_s);
+    if (config.proj_file) free(config.proj_file);
+    if (config.cmd_dir != DEFAULT_CMD_DIR) free(config.cmd_dir);
+    if (config.cmd_prefix != DEFAULT_CMD_PREFIX) free(config.cmd_prefix);
 }
 
-void loadConfig()
-{
-
+void loadConfig() {
     FILE *fp;
 
     autofree(char) *projfile = Shakefile_find_projfile();

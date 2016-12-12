@@ -8,4 +8,4 @@
 int cliInit(void);
 int cliEdit(char *cmd);
 
-#endif // SHAKE_CLI_H
+#endif  // SHAKE_CLI_H

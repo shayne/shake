@@ -7,15 +7,18 @@
 
 #include "colors.h"
 
-#define LOG(...) \
-    fprintf(stderr, __VA_ARGS__); fprintf(stderr, "\n");
+#define LOG(...)                  \
+    fprintf(stderr, __VA_ARGS__); \
+    fprintf(stderr, "\n");
 
 #define LOGN() fprintf(stderr, "\n");
 
-#define LOGE(...) \
-    fprintf(stderr, COLOR_ERROR("[ERROR] ") __VA_ARGS__); fprintf(stderr, "\n");
+#define LOGE(...)                                         \
+    fprintf(stderr, COLOR_ERROR("[ERROR] ") __VA_ARGS__); \
+    fprintf(stderr, "\n");
 
-#define LOGW(...) \
-    fprintf(stderr, COLOR_WARN("[WARN] ") __VA_ARGS__); fprintf(stderr, "\n");
+#define LOGW(...)                                       \
+    fprintf(stderr, COLOR_WARN("[WARN] ") __VA_ARGS__); \
+    fprintf(stderr, "\n");
 
-#endif //SHAKE_LOG_H
+#endif  // SHAKE_LOG_H

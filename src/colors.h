@@ -19,4 +19,4 @@
 #define COLOR_ERROR(S) ANSI_COLOR("\033[0;31m", S)
 #define COLOR_INSTRUCTIONS(S) ANSI_COLOR("\033[0;37m", S)
 
-#endif // SHAKE_COLORS_H
+#endif  // SHAKE_COLORS_H
