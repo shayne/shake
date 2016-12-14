@@ -115,13 +115,14 @@ static void usage(int rc) {
 }
 
 static void noproject(void) {
+    printUsage();
     fprintf(stderr,
             "It appears this directory, or its parent directories, "
             "have not been setup to run shake.\n");
     fprintf(stderr,
             "To start using shake run:\n"
             "  $ shake --init\n\n");
-    usage(1);
+    exit(1);
 }
 
 static int parseOptions(int argc, char **argv) {
