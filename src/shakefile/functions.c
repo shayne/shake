@@ -32,16 +32,25 @@ int Shakefile_detect_functions(size_t size, char *fns[]) {
     close(pipes[1]);
 
     int i = 0;
+    int pos = 0;
     bstring line;
     FILE *stdout = fdopen(pipes[0], "r");
+    bstring prefix = bformat("%s", config.cmd_prefix);
     while ((line = bgets((bNgetc)fgetc, stdout, '\n')) != NULL) {
         btrimws(line);
+        pos = binstrcaseless(line, 0, prefix);
+        if (pos != 0) {
+            bdestroy(line);
+            continue;
+        }
+
         bdelete(line, 0, config.cmd_prefix_len);
 
         char *fn = bdata(line);
         check(fn != NULL, "bdata line was null.");
 
-        fns[i++] = strdup(fn);
+        fns[i] = strdup(fn);
+        i++;
         check(i < (int)size, "too many functions");
 
         bdestroy(line);

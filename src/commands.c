@@ -76,8 +76,8 @@ ssize_t loadCommands(char ***cmds_out, char ***descs_out) {
     ssize_t size = 0;
     glob_t globbuf;
 
-    char *fns[MAX_FNS];
-    char *fndescs[MAX_FNS];
+    char *fns[MAX_FNS] = {0};
+    char *fndescs[MAX_FNS] = {0};
 
     char *pat = NULL;
     rc = asprintf(&pat, "%s/%s/%s*", config.proj_dir, config.cmd_dir,
