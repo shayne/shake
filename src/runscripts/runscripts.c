@@ -45,8 +45,7 @@ int Runscripts_find_script(char *cmd_name, char **out) {
                   config.cmd_prefix);
     check(rc > 0, "failed to format string");
 
-    rc = glob(pat, 0, NULL, &globbuf);
-    check(rc == 0, "glob failed");
+    glob(pat, 0, NULL, &globbuf);
 
     size_t cmd_name_l = strlen(cmd_name);
 

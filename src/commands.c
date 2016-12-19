@@ -86,9 +86,6 @@ ssize_t loadCommands(char ***cmds_out, char ***descs_out) {
     check_mem(pat);
 
     rc = glob(pat, 0, NULL, &globbuf);
-    if (globbuf.gl_pathc == 0) {
-        debug("glob returned 0 results");
-    }
 
     fncount = Shakefile_detect_functions(MAX_FNS, fns);
     Shakefile_detect_descriptions(MAX_FNS, fndescs);
